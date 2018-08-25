@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="libs/lwjgl/libs/lwjgl-glfw.jar"/>
+	<classpathentry kind="lib" path="libs/lwjgl/libs/lwjgl-openal.jar"/>
+	<classpathentry kind="lib" path="libs/lwjgl/libs/lwjgl-opengl.jar"/>
+	<classpathentry kind="lib" path="libs/lwjgl/libs/lwjgl.jar"/>
+	<classpathentry kind="lib" path="libs/lwjgl/natives/windows/lwjgl-glfw-natives-windows.jar"/>
+	<classpathentry kind="lib" path="libs/lwjgl/natives/windows/lwjgl-natives-windows.jar"/>
+	<classpathentry kind="lib" path="libs/lwjgl/natives/windows/lwjgl-openal-natives-windows.jar"/>
+	<classpathentry kind="lib" path="libs/lwjgl/natives/windows/lwjgl-opengl-natives-windows.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
