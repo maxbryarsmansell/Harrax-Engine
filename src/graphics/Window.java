@@ -76,7 +76,7 @@ public class Window {
 			throw new RuntimeException("Failed to create the GLFW window.");
 		}
 
-		glfwSetInputMode(id, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		//glfwSetInputMode(id, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		
 		// Make the OpenGL context current
 		glfwMakeContextCurrent(id);
