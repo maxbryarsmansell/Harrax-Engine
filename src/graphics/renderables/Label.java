@@ -16,7 +16,7 @@ public class Label extends Renderable{
 	
 	private String text;
 	private Font font;
-	private Colour colour;
+	private Colour textColour;
 	
 	/*
 	 * Constructor for the label
@@ -26,14 +26,14 @@ public class Label extends Renderable{
 		super(new Vec4(x, y, 0, 1), null, null);
 		this.text = text;
 		this.font = font;
-		this.colour = colour;
+		this.textColour = colour;
 	}
 	
 	public Label(Font font, String text, float x, float y, Colour colour, Colour fill) {
 		super(new Vec4(x, y, 0, 1), new Vec2(font.getTextWidth(text), font.getTextHeight(text)), fill);
 		this.text = text;
 		this.font = font;
-		this.colour = colour;
+		this.textColour = colour;
 	}
 	
 	/*
@@ -45,7 +45,7 @@ public class Label extends Renderable{
 		if (size != null && super.colour != null) {
 			renderer.submitQuad(this);
 		}
-		renderer.submitText(font, position.x, position.y, colour, text);
+		renderer.submitText(font, position.x, position.y, textColour, text);
 	}
 	
 	/*

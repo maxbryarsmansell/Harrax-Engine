@@ -7,6 +7,8 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import org.lwjgl.Version;
+import org.lwjgl.glfw.GLFW;
+
 import utils.Property;
 
 public class Window {
@@ -21,6 +23,7 @@ public class Window {
 	private final long id;
 	private int width, height;
 	private String title;
+	private boolean fullscreen;
 
 	public Window() {
 		System.out.println("Initilisation started.");
@@ -31,6 +34,7 @@ public class Window {
 		this.title = Property.loadProperty("title", "window");
 		this.width = Integer.parseInt(Property.loadProperty("width", "window"));
 		this.height = Integer.parseInt(Property.loadProperty("height", "window"));
+		this.fullscreen = Boolean.parseBoolean(Property.loadProperty("fullscreen", "window"));
 
 		// Creating a temporary window for getting the available OpenGL version
 		glfwDefaultWindowHints();
@@ -58,14 +62,22 @@ public class Window {
 		}
 
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		
 
 		// Create window with specified OpenGL context
-		id = glfwCreateWindow(width, height, title, NULL, NULL);
+		if (fullscreen) {
+			id = glfwCreateWindow(width, height, title, GLFW.glfwGetPrimaryMonitor(), NULL);
+		} else {
+			id = glfwCreateWindow(width, height, title, NULL, NULL);
+		}
+		
 		if (id == NULL) {
 			glfwTerminate();
 			throw new RuntimeException("Failed to create the GLFW window.");
 		}
 
+		glfwSetInputMode(id, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		
 		// Make the OpenGL context current
 		glfwMakeContextCurrent(id);
 
