@@ -73,7 +73,7 @@ public class Game {
 		}
 
 		Label label = new Label(font, "fps", -395, 255, Colour.WHITE, new Colour(0.8f, 0.8f, 0.8f, 0.5f));
-		zoom = new Label(font, "Zoom: " + mouseWheel, -400, -250, Colour.WHITE, new Colour(0.8f, 0.8f, 0.8f, 0.5f));
+		zoom = new Label(font, "Zoom: " + mouseWheel / 50, -400, -250, Colour.WHITE, new Colour(0.8f, 0.8f, 0.8f, 0.5f));
 		ui.add(label);
 		ui.add(new Label(font, "Scroll To Zoom", -400, -300, new Colour(), new Colour()));
 		ui.add(zoom);
@@ -155,7 +155,7 @@ public class Game {
 			if (mouseWheel <= 1) {
 				mouseWheel = 1;
 			}
-			zoom.setText("Zoom: " + mouseWheel);
+			zoom.setText("Zoom: " + mouseWheel / 50);
 		});
 
 		/* Initialize renderer */
