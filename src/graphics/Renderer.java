@@ -77,7 +77,7 @@ public class Renderer {
 	 */
 
 	public Renderer() {
-		init(new Shader("res/shaders/batch.vert", "res/shaders/batch.frag"), new Camera(800, 600));
+		init(new Shader("res/shaders/batch.vert", "res/shaders/batch.frag"), new Camera());
 	}
 
 	public Renderer(Shader shader, Camera camera) {

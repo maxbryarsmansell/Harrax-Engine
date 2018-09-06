@@ -12,6 +12,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
@@ -24,8 +25,10 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GLCapabilities;
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -41,6 +44,7 @@ public class Window {
 
 	private final long id;
 	private int width, height;
+	private float aspect;
 	private String title;
 	private boolean fullscreen;
 
@@ -71,16 +75,26 @@ public class Window {
 		// Loading window properties
 
 		this.title = Property.loadProperty("title", "window");
-		this.width = Integer.parseInt(Property.loadProperty("width", "window"));
-		this.height = Integer.parseInt(Property.loadProperty("height", "window"));
 		this.fullscreen = Boolean.parseBoolean(Property.loadProperty("fullscreen", "window"));
 
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
+		
 		// Create window with specified OpenGL context
 		if (fullscreen) {
-			id = glfwCreateWindow(width, height, title, GLFW.glfwGetPrimaryMonitor(), NULL);
+			long monitor = glfwGetPrimaryMonitor();
+			GLFWVidMode mode = glfwGetVideoMode(monitor);
+			glfwWindowHint(GLFW.GLFW_RED_BITS, mode.redBits());
+			glfwWindowHint(GLFW.GLFW_GREEN_BITS, mode.greenBits());
+			glfwWindowHint(GLFW.GLFW_BLUE_BITS, mode.blueBits());
+			glfwWindowHint(GLFW.GLFW_REFRESH_RATE, mode.refreshRate());
+			this.width = mode.width();
+			this.height = mode.height();
+			this.aspect = width / height;
+			id = glfwCreateWindow(width, height, title, monitor, NULL);
 		} else {
+			this.width = Integer.parseInt(Property.loadProperty("width", "window"));
+			this.height = Integer.parseInt(Property.loadProperty("height", "window"));
+			this.aspect = width / height;
 			id = glfwCreateWindow(width, height, title, NULL, NULL);
 		}
 
@@ -155,6 +169,10 @@ public class Window {
 
 	public int getHeight() {
 		return height;
+	}
+	
+	public float getAspect() {
+		return aspect;
 	}
 
 	public long getID() {

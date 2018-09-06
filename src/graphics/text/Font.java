@@ -199,7 +199,7 @@ public class Font {
 	 * Getters and setters
 	 */
 
-	public int getTextHeight(CharSequence text) {
+	public float getTextHeight(CharSequence text) {
 		int lines = 1;
 		for(int i = 0; i < text.length(); i++) {
 		    char ch = text.charAt(i);
@@ -211,7 +211,7 @@ public class Font {
 		return textHeight;
 	}
 
-	public int getTextWidth(CharSequence text) {
+	public float getTextWidth(CharSequence text) {
 		int width = 0;
 		int lineWidth = 0;
 		for (int i = 0; i < text.length(); i++) {

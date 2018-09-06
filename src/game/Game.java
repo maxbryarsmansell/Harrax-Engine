@@ -1,5 +1,6 @@
 package game;
 
+import graphics.Camera;
 import graphics.Colour;
 import graphics.Renderer;
 import graphics.Window;
@@ -42,6 +43,10 @@ public class Game {
 	
 	private boolean running;
 	private GLFWErrorCallback errorCallback;
+	
+	public static float VIRTUAL_WIDTH = 800.0f;
+	public static float VIRTUAL_HEIGHT = 450.0f;
+	public static float TARGET_ASPECT = VIRTUAL_WIDTH / VIRTUAL_HEIGHT;
 
 	float mouseWheel = 50;
 	Vec2 prevMouse = new Vec2(0, 0);
@@ -72,10 +77,10 @@ public class Game {
 			layer.add(sprites.get(i));
 		}
 
-		Label label = new Label(font, "fps", -395, 255, Colour.WHITE, new Colour(0.8f, 0.8f, 0.8f, 0.5f));
-		zoom = new Label(font, "Zoom: " + mouseWheel / 50, -400, -250, Colour.WHITE, new Colour(0.8f, 0.8f, 0.8f, 0.5f));
+		Label label = new Label(font, "fps", 0.005f, 0.90f, Colour.WHITE, new Colour(0.8f, 0.8f, 0.8f, 0.5f));
+		System.out.println(label.getPosition().toString());
+		zoom = new Label(font, "Zoom: " + mouseWheel / 50, 0.005f, 0.005f, Colour.WHITE, new Colour(0.8f, 0.8f, 0.8f, 0.5f));
 		ui.add(label);
-		ui.add(new Label(font, "Scroll To Zoom", -400, -300, new Colour(), new Colour()));
 		ui.add(zoom);
 
 		while (running) {

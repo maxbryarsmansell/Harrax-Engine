@@ -1,5 +1,6 @@
 package graphics;
 
+import game.Game;
 import maths.Mat4;
 import maths.Vec2;
 
@@ -24,24 +25,12 @@ public class Camera {
 	 * Camera constructor that creates a camera with a given size
 	 */
 	
-	public Camera(Vec2 size) {
+	public Camera() {
 		this.position = new Vec2(0, 0);
 		this.origin = new Vec2(0, 0);
 		this.zoom = 1f;
 		this.rotation = 0f;
-		this.projectionMatrix = Mat4.Orthographic(-size.x / 2f, size.x / 2f, -size.y / 2f, size.y / 2f, 1, -1);
-	}
-	
-	/*
-	 * Camera constructor that creates a camera with a given size and projection
-	 */
-	
-	public Camera(Vec2 size, Mat4 projection) {
-		this.position = new Vec2(0, 0);
-		this.origin = new Vec2(0, 0);
-		this.zoom = 1f;
-		this.rotation = 0f;
-		this.projectionMatrix = projection;
+		this.projectionMatrix = Mat4.Orthographic(-0.5f * Game.VIRTUAL_WIDTH, 0.5f * Game.VIRTUAL_WIDTH, -0.5f * Game.VIRTUAL_HEIGHT, 0.5f * Game.VIRTUAL_HEIGHT, 1, -1);
 	}
 	
 	/*
@@ -49,7 +38,11 @@ public class Camera {
 	 */
 	
 	public Camera(float width, float height) {
-		this(new Vec2(width, height));
+		this.position = new Vec2(0, 0);
+		this.origin = new Vec2(0, 0);
+		this.zoom = 1f;
+		this.rotation = 0f;
+		this.projectionMatrix = Mat4.Orthographic(0, width,  0, height, 1, -1);
 	}
 	
 	/*

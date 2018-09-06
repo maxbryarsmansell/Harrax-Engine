@@ -2,6 +2,7 @@ package graphics.layers;
 
 import java.util.ArrayList;
 
+import game.Game;
 import graphics.Camera;
 import graphics.Renderer;
 import graphics.Shader;
@@ -26,18 +27,15 @@ public class Layer {
 	 * Layer constructors
 	 */
 	
-	public Layer() {
+	public Layer(Camera camera) {
 		this.renderables = new ArrayList<Renderable>();
-		this.camera = new Camera(800, 600);
-		this.shader = new Shader("res/shaders/batch.vert", "res/shaders/batch.frag");
+		this.camera = camera;
+		this.shader = new Shader("res/shaders/batch.vert", "res/shaders/batch.frag");;
 		this.renderer = new Renderer(shader, camera);
 	}
 	
-	public Layer(Shader shader, Camera camera) {
-		this.renderables = new ArrayList<Renderable>();
-		this.camera = camera;
-		this.shader = shader;
-		this.renderer = new Renderer(shader, camera);
+	public Layer() {
+		this(new Camera());
 	}
 	
 	/*
