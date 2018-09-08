@@ -18,6 +18,8 @@ import graphics.Texture;
 
 public class Font {
 	
+	public static Font DEBUG_FONT = new Font(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.BOLD, 15), true);
+	
 	/*
 	 * Attributes for
 	 * mapping characters to glyphs
@@ -199,7 +201,7 @@ public class Font {
 	 * Getters and setters
 	 */
 
-	public float getTextHeight(CharSequence text) {
+	public int getTextHeight(CharSequence text) {
 		int lines = 1;
 		for(int i = 0; i < text.length(); i++) {
 		    char ch = text.charAt(i);
@@ -211,7 +213,7 @@ public class Font {
 		return textHeight;
 	}
 
-	public float getTextWidth(CharSequence text) {
+	public int getTextWidth(CharSequence text) {
 		int width = 0;
 		int lineWidth = 0;
 		for (int i = 0; i < text.length(); i++) {

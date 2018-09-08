@@ -5,17 +5,18 @@ import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBindTexture;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -25,11 +26,11 @@ import java.util.Stack;
 import org.lwjgl.system.MemoryUtil;
 
 import graphics.renderables.Renderable;
+import graphics.text.Font;
+import graphics.text.Glyph;
 import maths.Mat4;
 import maths.Vec2;
 import maths.Vec4;
-import graphics.text.Font;
-import graphics.text.Glyph;
 
 public class Renderer {
 
@@ -77,7 +78,7 @@ public class Renderer {
 	 */
 
 	public Renderer() {
-		init(new Shader("res/shaders/batch.vert", "res/shaders/batch.frag"), new Camera());
+		init(new Shader("res/shaders/batch.vert", "res/shaders/batch.frag"), new Camera(800, 600));
 	}
 
 	public Renderer(Shader shader, Camera camera) {
@@ -391,6 +392,7 @@ public class Renderer {
 	 */
 
 	public static void clear() {
+		glClearColor(Colour.CLEAR_COLOUR.getRed(), Colour.CLEAR_COLOUR.getGreen(), Colour.CLEAR_COLOUR.getBlue(), Colour.CLEAR_COLOUR.getAlpha());
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 }

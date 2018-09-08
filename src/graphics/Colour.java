@@ -4,15 +4,20 @@ import java.util.Random;
 
 import maths.Vec3;
 import maths.Vec4;
+import utils.Property;
 
 public class Colour {
 
+	public static Colour CLEAR_COLOUR = new Colour(0f, 0f, 0f, 1f);
+	public static boolean inverted = Boolean.parseBoolean(Property.loadProperty("invertColours", "graphics"));
+	
 	public static Colour BLACK = new Colour(0f, 0f, 0f, 1f);
 	public static Colour WHITE = new Colour(1f, 1f, 1f, 1f);
 	public static Colour RED = new Colour(1f, 0f, 0f, 1f);
 	public static Colour GREEN = new Colour(0f, 1f, 0f, 1f);
 	public static Colour BLUE = new Colour(0f, 0f, 1f, 1f);
-
+	
+	
 	/*
 	 * Attributes to represent the channels of colour in RBGA (Red, Green, Blue,
 	 * Alpha)
@@ -64,6 +69,9 @@ public class Colour {
 	 */
 
 	public float getRed() {
+		if (inverted) {
+			return 1 - red;
+		}
 		return red;
 	}
 
@@ -86,6 +94,9 @@ public class Colour {
 	 */
 
 	public float getGreen() {
+		if (inverted) {
+			return 1 - green;
+		}
 		return green;
 	}
 
@@ -108,6 +119,9 @@ public class Colour {
 	 */
 
 	public float getBlue() {
+		if (inverted) {
+			return 1 - blue;
+		}
 		return blue;
 	}
 

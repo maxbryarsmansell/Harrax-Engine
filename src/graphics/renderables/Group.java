@@ -2,12 +2,9 @@ package graphics.renderables;
 
 import java.util.ArrayList;
 
-import graphics.Colour;
 import graphics.Renderer;
 import maths.Mat4;
-import maths.Vec2;
 import maths.Vec3;
-import maths.Vec4;
 
 public class Group extends Renderable {
 	
@@ -31,7 +28,7 @@ public class Group extends Renderable {
 	}
 	
 	public Group(Mat4 transform) {
-		super(new Vec4(0, 0, 0, 1), new Vec2(0, 0), Colour.BLACK);
+		super(null, null, null);
 		this.children = new ArrayList<Renderable>();
 		this.transformationMatrix = transform;
 	}
@@ -51,7 +48,9 @@ public class Group extends Renderable {
 	@Override
 	public void submit(Renderer renderer) {
 		
-		super.submit(renderer);
+		if (position != null) {
+			super.submit(renderer);
+		}
 		
 		renderer.push_transformation(transformationMatrix);
 		for (Renderable r : children) {

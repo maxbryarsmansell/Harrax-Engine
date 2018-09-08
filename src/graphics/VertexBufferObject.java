@@ -1,6 +1,10 @@
 package graphics;
 
-import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glBufferSubData;
+import static org.lwjgl.opengl.GL15.glDeleteBuffers;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
