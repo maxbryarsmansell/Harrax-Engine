@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import com.max.harrax.graphics.Colour;
 import com.max.harrax.graphics.Renderer;
-import com.max.harrax.graphics.layers.Layer;
 import com.max.harrax.graphics.text.Font;
+import com.max.harrax.layers.Layer;
 import com.max.harrax.maths.Vec2;
 
 public class Label extends Renderable {

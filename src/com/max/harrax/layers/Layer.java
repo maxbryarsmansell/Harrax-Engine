@@ -1,4 +1,4 @@
-package com.max.harrax.graphics.layers;
+package com.max.harrax.layers;
 
 import java.util.ArrayList;
 import java.util.Iterator;

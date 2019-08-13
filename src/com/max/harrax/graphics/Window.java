@@ -9,10 +9,10 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWWindowCloseCallback;
 
+import com.max.harrax.Application;
 import com.max.harrax.events.Event;
 import com.max.harrax.events.KeyPressedEvent;
 import com.max.harrax.events.WindowCloseEvent;
-import com.max.harrax.game.Application;
 import com.max.harrax.utils.Property;
 
 public class Window {

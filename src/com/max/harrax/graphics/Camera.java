@@ -1,6 +1,6 @@
 package com.max.harrax.graphics;
 
-import com.max.harrax.game.Application;
+import com.max.harrax.Application;
 import com.max.harrax.maths.Mat4;
 import com.max.harrax.maths.Vec2;
 import com.max.harrax.maths.Vec4;

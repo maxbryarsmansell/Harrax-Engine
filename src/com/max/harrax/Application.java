@@ -1,4 +1,4 @@
-package com.max.harrax.game;
+package com.max.harrax;
 
 import java.util.Stack;
 
@@ -7,8 +7,8 @@ import com.max.harrax.events.EventDispatcher;
 import com.max.harrax.events.WindowCloseEvent;
 import com.max.harrax.events.Event.EventType;
 import com.max.harrax.graphics.Window;
-import com.max.harrax.graphics.layers.DebugLayer;
-import com.max.harrax.graphics.layers.Layer;
+import com.max.harrax.layers.DebugLayer;
+import com.max.harrax.layers.Layer;
 import com.max.harrax.utils.Timer;
 
 public class Application {

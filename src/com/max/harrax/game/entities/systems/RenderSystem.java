@@ -7,7 +7,7 @@ import com.max.harrax.game.entities.Entity;
 import com.max.harrax.game.entities.components.RenderComponent;
 import com.max.harrax.game.entities.components.TransformComponent;
 import com.max.harrax.graphics.Camera;
-import com.max.harrax.graphics.layers.Layer;
+import com.max.harrax.layers.Layer;
 
 public class RenderSystem implements System {
 

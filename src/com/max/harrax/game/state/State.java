@@ -3,7 +3,7 @@ package com.max.harrax.game.state;
 import java.util.ArrayList;
 
 import com.max.harrax.events.Event;
-import com.max.harrax.graphics.layers.Layer;
+import com.max.harrax.layers.Layer;
 
 public class State {
 

@@ -1,4 +1,4 @@
-package com.max.harrax.graphics.layers;
+package com.max.harrax.layers;
 
 import com.max.harrax.events.Event;
 import com.max.harrax.events.EventDispatcher;
@@ -11,7 +11,7 @@ public class DebugLayer extends Layer {
 	
 	public DebugLayer() {
 		super("Debug");
-		
+	
 		//fpsLabel = new Label(Font.DEBUG_FONT, "fps", Colour.BLUE, Label.ALIGNMENT.RIGHT, Label.ALIGNMENT.TOP, 5);
 
 		//upsLabel = new Label(Font.DEBUG_FONT, "ups", Colour.BLUE, Label.ALIGNMENT.RIGHT, Label.ALIGNMENT.TOP, 5);
