@@ -1,18 +1,13 @@
-package com.max.harrax.graphics;
+package com.max.harrax;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.glfw.GLFW.Functions.*;
 
-import org.lwjgl.Version;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
-import org.lwjgl.glfw.GLFWWindowCloseCallback;
+import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.*;
 
-import com.max.harrax.Application;
-import com.max.harrax.events.Event;
-import com.max.harrax.events.KeyPressedEvent;
-import com.max.harrax.events.WindowCloseEvent;
+import com.max.harrax.events.*;
 import com.max.harrax.utils.Property;
 
 public class Window {
@@ -21,11 +16,12 @@ public class Window {
 	private int width, height;
 
 	private final long window;
-	
-	
+
 	GLFWErrorCallback errorCallback;
 	GLFWWindowCloseCallback windowCloseCallback;
 	GLFWKeyCallback keyCallback;
+	GLFWMouseButtonCallback mouseButtonCallback;
+	GLFWCursorPosCallback cursorPosCallback;
 
 	public Window() {
 		System.out.println("Window initilisation started.");
@@ -42,9 +38,12 @@ public class Window {
 		glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
 		glfwDefaultWindowHints();
-		window = glfwCreateWindow(width, height, title, NULL, NULL);
+		window = glfwCreateWindow(width, height, title, 0, 0);
 
 		glfwMakeContextCurrent(window);
+		
+		GL.createCapabilities();
+		
 		setVsync(false);
 
 		glfwSetWindowCloseCallback(window, windowCloseCallback = GLFWWindowCloseCallback.create((window) -> {
@@ -62,10 +61,25 @@ public class Window {
 
 		}));
 
-		// glfwSetCursorPosCallback(window.getID(), cursorPosCallback = new
-		// MousePosHandler());
-		// glfwSetMouseButtonCallback(window.getID(), mouseButtonCallback = new
-		// MouseButtonHandler());
+		glfwSetMouseButtonCallback(window,
+				mouseButtonCallback = GLFWMouseButtonCallback.create((window, button, action, mods) -> {
+					Event event;
+					switch (action) {
+					case GLFW_PRESS:
+						event = new MouseButtonPressedEvent(button);
+						Application.get().onEvent(event);
+						break;
+					case GLFW_RELEASE:
+						event = new MouseButtonReleasedEvent(button);
+						Application.get().onEvent(event);
+						break;
+					}
+				}));
+
+		glfwSetCursorPosCallback(window, cursorPosCallback = GLFWCursorPosCallback.create((window, xpos, ypos) -> {
+			Event event = new MouseMovedEvent((float) xpos, (float) ypos);
+			Application.get().onEvent(event);
+		}));
 
 		System.out.println("Window and OpenGL initilisation successful.");
 	}

@@ -1,4 +1,4 @@
-package com.max.harrax.graphics.text;
+package com.max.harrax.graphicsOLD.text;
 
 import java.awt.Canvas;
 import java.awt.FontMetrics;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.lwjgl.system.MemoryUtil;
 
-import com.max.harrax.graphics.Texture;
+import com.max.harrax.graphicsOLD.Texture;
 
 public class Font {
 	

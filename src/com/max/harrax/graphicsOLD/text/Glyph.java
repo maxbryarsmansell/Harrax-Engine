@@ -1,4 +1,4 @@
-package com.max.harrax.graphics.text;
+package com.max.harrax.graphicsOLD.text;
 
 public class Glyph {
 	public final int width;

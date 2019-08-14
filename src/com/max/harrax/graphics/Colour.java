@@ -7,174 +7,58 @@ import com.max.harrax.maths.Vec4;
 import com.max.harrax.utils.Property;
 
 public class Colour {
-
-	public static Colour CLEAR_COLOUR = new Colour(1f, 1f, 1f, 1f);
-	public static boolean inverted = Boolean.parseBoolean(Property.loadProperty("invertColours", "graphics"));
 	
-	public static Colour BLACK = new Colour(0f, 0f, 0f, 1f);
-	public static Colour WHITE = new Colour(1f, 1f, 1f, 1f);
-	public static Colour RED = new Colour(1f, 0f, 0f, 1f);
-	public static Colour GREEN = new Colour(0f, 1f, 0f, 1f);
-	public static Colour BLUE = new Colour(0f, 0f, 1f, 1f);
-	public static Colour EMPTY_COLOUR = new Colour(0f, 0f, 0f, 0f);
+	public static Colour BLACK = new Colour(0, 0, 0, 255);
+	public static Colour WHITE = new Colour(255, 255, 255, 255);
+	public static Colour RED = new Colour(255, 0, 0, 255);
+	public static Colour GREEN = new Colour(0, 255, 0, 255);
+	public static Colour BLUE = new Colour(0, 0, 255, 255);
+	public static Colour TRANSPARENT = new Colour(0, 0, 0, 0);
 	
+	private int colour;
 	
-	/*
-	 * Attributes to represent the channels of colour in RBGA (Red, Green, Blue,
-	 * Alpha)
-	 */
+	static Random r = new Random();
 
-	private float red, green, blue, alpha;
-
-	/*
-	 * Constructor which creates a new colour with given channel values
-	 */
-
-	public Colour(float red, float green, float blue, float alpha) {
-		this.red = red;
-		this.green = green;
-		this.blue = blue;
-		this.alpha = alpha;
+	public Colour(int red, int green, int blue, int alpha) {
+		colour = (red << 24) | (green << 16) | (blue << 12) | (alpha << 8);
 	}
-	
-	/*
-	 * Constructor which creates a new colour with a given intensity
-	 */
 
-	public Colour(float intensity) {
-		this(intensity, intensity, intensity, 1.0f);
+	public Colour(int red, int green, int blue) {
+		this(red, green, blue, 255);
 	}
-	
-	/*
-	 * Constructor which creates a new colour with only RGB (1.0f default alpha)
-	 */
-	
-	public Colour(float red, float green, float blue) {
-		this(red, green, blue, 1.0f);
-	}
-	
-	/*
-	 * Constructor which creates a new random colour
-	 */
 	
 	public Colour() {
-		Random r = new Random();
-		this.red = r.nextFloat();
-		this.green = r.nextFloat();
-		this.blue = r.nextFloat();
-		this.alpha = 1.0f;
+		this(r.nextInt(255), r.nextInt(255), r.nextInt(255), 255);
 	}
-
-	/*
-	 * Returns the red component
-	 */
 
 	public float getRed() {
-		if (inverted) {
-			return 1 - red;
-		}
-		return red;
+		return (colour >> 24) & 0xFFFFFFFF;
 	}
-
-	/*
-	 * Sets the red component
-	 */
-
-	public void setRed(float red) {
-		if (red < 0f) {
-			red = 0f;
-		}
-		if (red > 1f) {
-			red = 1f;
-		}
-		this.red = red;
-	}
-
-	/*
-	 * Returns the green component
-	 */
 
 	public float getGreen() {
-		if (inverted) {
-			return 1 - green;
-		}
-		return green;
+		return (colour >> 16) & 0xFFFFFFFF;
 	}
-
-	/*
-	 * Sets the green component
-	 */
-
-	public void setGreen(float green) {
-		if (green < 0f) {
-			green = 0f;
-		}
-		if (green > 1f) {
-			green = 1f;
-		}
-		this.green = green;
-	}
-
-	/*
-	 * Returns the blue component
-	 */
 
 	public float getBlue() {
-		if (inverted) {
-			return 1 - blue;
-		}
-		return blue;
+		return (colour >> 12) & 0xFFFFFFFF;
 	}
-
-	/*
-	 * Sets the blue component
-	 */
-
-	public void setBlue(float blue) {
-		if (blue < 0f) {
-			blue = 0f;
-		}
-		if (blue > 1f) {
-			blue = 1f;
-		}
-		this.blue = blue;
-	}
-
-	/*
-	 * Returns the alpha component
-	 */
 
 	public float getAlpha() {
-		return alpha;
+		return (colour >> 8) & 0xFFFFFFFF;
 	}
-
-	/*
-	 * Sets the alpha component
-	 */
-
-	public void setAlpha(float alpha) {
-		if (alpha < 0f) {
-			alpha = 0f;
-		}
-		if (alpha > 1f) {
-			alpha = 1f;
-		}
-		this.alpha = alpha;
-	}
-
-	/*
-	 * Returns the colour as a vec3
-	 */
 
 	public Vec3 toVec3() {
+		float red = getRed() / 255f;
+		float green = getGreen() / 255f;
+		float blue = getBlue() / 255f;
 		return new Vec3(red, green, blue);
 	}
 
-	/*
-	 * Returns the colour as a vec4
-	 */
-
 	public Vec4 toVec4() {
+		float red = getRed() / 255f;
+		float green = getGreen() / 255f;
+		float blue = getBlue() / 255f;
+		float alpha = getAlpha() / 255f;
 		return new Vec4(red, green, blue, alpha);
 	}
 

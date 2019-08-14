@@ -1,14 +1,17 @@
 package com.max.harrax;
 
+import java.util.ListIterator;
 import java.util.Stack;
+
+import org.lwjgl.glfw.GLFW;
 
 import com.max.harrax.events.Event;
 import com.max.harrax.events.EventDispatcher;
+import com.max.harrax.events.KeyPressedEvent;
 import com.max.harrax.events.WindowCloseEvent;
 import com.max.harrax.events.Event.EventType;
-import com.max.harrax.graphics.Window;
-import com.max.harrax.layers.DebugLayer;
-import com.max.harrax.layers.Layer;
+import com.max.harrax.layer.DebugLayer;
+import com.max.harrax.layer.Layer;
 import com.max.harrax.utils.Timer;
 
 public class Application {
@@ -20,47 +23,50 @@ public class Application {
 	private static final float TARGET_DELTA = 1f / TARGET_UPS;
 
 	private static Application appInstance;
-	
-	private Stack<Layer> layerStack;
 
+	private DebugLayer debugLayer;
+	private LayerStack layerStack;
 	private Window window;
-	
-	// Time to keep track of updates
 	private Timer timer;
-	
-	// The pause state of the game
+
 	private boolean running;
-	
+
 	// Constructor
 	public Application() {
-		
-		assert appInstance != null : "There should only be one instance of application.";
+
+		assert true : "There should only be one instance of application.";
+
 		appInstance = this;
-		
+
 		timer = new Timer();
 		window = new Window();
-		layerStack = new Stack<Layer>();
-		
-		pushLayer(new DebugLayer());
-		
+		layerStack = new LayerStack();
+
+		debugLayer = new DebugLayer();
+		pushLayer(debugLayer);
+
 		running = true;
 	}
-	
+
 	public static Application get() {
 		return appInstance;
 	}
 
 	public void pushLayer(Layer layer) {
-		this.layerStack.push(layer);
+		this.layerStack.pushLayer(layer);
+	}
+
+	public void popLayer(Layer layer) {
+		this.layerStack.popLayer(layer);
 	}
 
 	public void onEvent(Event event) {
 		EventDispatcher dispatcher = new EventDispatcher(event);
-		dispatcher.dispatch(EventType.WindowClose, (Event e) -> (onWindowClose((WindowCloseEvent)e)));
-		
-		for (int i = layerStack.size() - 1; i >= 0; i--)
-		{
-			layerStack.get(i).onEvent(event);
+		dispatcher.dispatch(EventType.WindowClose, (Event e) -> (onWindowClose((WindowCloseEvent) e)));
+		ListIterator<Layer> iterator = layerStack.end();
+
+		while (iterator.hasPrevious()) {
+			iterator.previous().onEvent(event);
 			if (event.isHandled)
 				break;
 		}
@@ -70,7 +76,7 @@ public class Application {
 		float accumulator = 0f;
 
 		while (running) {
-			
+
 			timer.update();
 
 			float delta = timer.getDelta();
@@ -79,18 +85,20 @@ public class Application {
 			// Update
 			while (accumulator >= TARGET_DELTA) {
 				accumulator -= TARGET_DELTA;
-				
-				for (Layer layer : layerStack) {
-					layer.onUpdate();
+
+				ListIterator<Layer> iterator = layerStack.start();
+
+				while (iterator.hasNext()) {
+					iterator.next().onUpdate();
 				}
 			}
 
 			window.onUpdate();
 		}
-		
+
 		window.shutdown();
 	}
-	
+
 	public boolean onWindowClose(WindowCloseEvent event) {
 		running = false;
 		return true;

@@ -1,11 +1,11 @@
-package com.max.harrax.graphics.renderables;
+package com.max.harrax.graphicsOLD.renderables;
 
 import java.util.ArrayList;
 
-import com.max.harrax.graphics.Colour;
-import com.max.harrax.graphics.Renderer;
-import com.max.harrax.graphics.text.Font;
-import com.max.harrax.layers.Layer;
+import com.max.harrax.graphicsOLD.Colour;
+import com.max.harrax.graphicsOLD.Renderer;
+import com.max.harrax.graphicsOLD.text.Font;
+import com.max.harrax.layer.Layer;
 import com.max.harrax.maths.Vec2;
 
 public class Label extends Renderable {
@@ -101,7 +101,7 @@ public class Label extends Renderable {
 		}
 	}
 
-	private void calculatePosition() {
+	public void calculatePosition() {
 		size = new Vec2(font.getTextWidth(text) * scale, font.getTextHeight(text) * scale);
 
 		switch (xAlignment) {

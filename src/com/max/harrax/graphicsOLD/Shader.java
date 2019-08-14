@@ -1,4 +1,4 @@
-package com.max.harrax.graphics;
+package com.max.harrax.graphicsOLD;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -18,7 +18,15 @@ import static org.lwjgl.opengl.GL11.GL_FLOAT;
 
 public class Shader {
 	
+	/*
+	 * Stores the handle of the shader.
+	 */
+	
 	private final int id;
+
+	/*
+	 * Constructor for the shader
+	 */
 
 	public Shader(String vertexPath, String fragmentPath) {
 		// Get the source code from the given files.
@@ -64,30 +72,48 @@ public class Shader {
 
 	}
 
+	/*
+	 * Set the pointer for a vertex attribute in the program
+	 */
+
 	public void pointVertexAttribute(String name, int size, int stride, int offset) {
 		int location = glGetAttribLocation(id, name);
 		glEnableVertexAttribArray(location);
 		glVertexAttribPointer(location, size, GL_FLOAT, false, stride, offset);
 	}
 	
+	/*
+	 * Sets a integer uniform
+	 */
 
-	public void setUniform1i(String name, int value) {
+	public void setUniform(String name, int value) {
 		int location = glGetUniformLocation(id, name);
 		glUniform1i(location, value);
 	}
 	
-	public void setUniform1f(String name, float value) {
+	/*
+	 * Sets a float uniform
+	 */
+	
+	public void setUniform(String name, float value) {
 		int location = glGetUniformLocation(id, name);
 		glUniform1f(location, value);
 	}
 	
+	/*
+	 * Sets an integer array uniform
+	 */
 	
-	public void setUniform1iv(String name, int[] value) {
+	public void setUniform(String name, int[] value) {
 		int location = glGetUniformLocation(id, name);
 		glUniform1iv(location, value);
 	}
+	
+	/*
+	 * Sets a Vec2 uniform
+	 */
 
-	public void setUniform2fv(String name, Vec2 value) {
+	public void setUniform(String name, Vec2 value) {
 		int location = glGetUniformLocation(id, name);
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 			FloatBuffer buffer = stack.mallocFloat(2);
@@ -96,7 +122,11 @@ public class Shader {
 		}
 	}
 	
-	public void setUniformMatrix4fv(String name, Mat4 value) {
+	/*
+	 * Sets a Mat4 uniform
+	 */
+
+	public void setUniform(String name, Mat4 value) {
 		int location = glGetUniformLocation(id, name);
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 			FloatBuffer buffer = stack.mallocFloat(4 * 4);
@@ -104,20 +134,34 @@ public class Shader {
 			glUniformMatrix4fv(location, false, buffer);
 		}
 	}
+	
+	/*
+	 * Sets the program ready for use
+	 */
 
 	public void use() {
 		glUseProgram(id);
 	}
 	
+	/*
+	 * Disables the program
+	 */
 	
 	public void disable() {
 		glUseProgram(0);
 	}
 
+	/*
+	 * Deletes the shader program
+	 */
 
 	public void dispose() {
 		glDeleteProgram(id);
 	}
+
+	/*
+	 * Load the source code from a given file
+	 */
 
 	private static CharSequence loadShaderSource(String path) {
 		StringBuilder builder = new StringBuilder();

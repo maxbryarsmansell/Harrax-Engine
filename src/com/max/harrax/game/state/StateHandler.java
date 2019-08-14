@@ -42,14 +42,8 @@ public class StateHandler extends State {
 	@Override
 	public void onUpdate(float delta) {
 		currentState.onUpdate(delta);
-
 	}
 
-	@Override
-	public void onRender() {
-		currentState.onRender();
-	}
-	
 	@Override
 	public void onEvent(Event event) {
 	}

@@ -2,6 +2,6 @@
  
  <properties>
     <entry key="title">Arcade Shooter</entry>
-    <entry key="width">1280</entry>
-    <entry key="height">720</entry>
+    <entry key="width">800</entry>
+    <entry key="height">600</entry>
 </properties>

@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.max.harrax.game.entities.Entity;
-import com.max.harrax.graphics.Colour;
-import com.max.harrax.graphics.renderables.Sprite;
+import com.max.harrax.graphicsOLD.Colour;
+import com.max.harrax.graphicsOLD.renderables.Sprite;
 
 public class RenderComponent implements Component {
 

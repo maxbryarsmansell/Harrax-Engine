@@ -3,7 +3,7 @@ package com.max.harrax.game.state;
 import java.util.ArrayList;
 
 import com.max.harrax.events.Event;
-import com.max.harrax.layers.Layer;
+import com.max.harrax.layer.Layer;
 
 public class State {
 
@@ -16,12 +16,6 @@ public class State {
 	public void onUpdate(float delta) {
 		for (Layer layer : layerStack) {
 			layer.onUpdate();
-		}
-	}
-
-	public void onRender() {
-		for (Layer layer : layerStack) {
-			layer.onRender();
 		}
 	}
 
