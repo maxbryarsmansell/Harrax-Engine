@@ -6,7 +6,7 @@ import java.util.List;
 import com.max.harrax.game.entities.Entity;
 import com.max.harrax.game.entities.components.RenderComponent;
 import com.max.harrax.game.entities.components.TransformComponent;
-import com.max.harrax.graphicsOLD.Camera;
+import com.max.harrax.graphics.Camera;
 import com.max.harrax.layer.Layer;
 
 public class RenderSystem implements System {

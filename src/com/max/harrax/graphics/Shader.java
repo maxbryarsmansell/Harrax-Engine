@@ -35,6 +35,7 @@ public class Shader {
 		// Get the compilation status to check for errors
 		status = glGetShaderi(vertex, GL_COMPILE_STATUS);
 		if (status != 1) {
+			glDeleteShader(vertex);
 			throw new RuntimeException(glGetShaderInfoLog(vertex));
 		}
 
@@ -45,6 +46,8 @@ public class Shader {
 		// Get the compilation status to check for errors
 		status = glGetShaderi(fragment, GL_COMPILE_STATUS);
 		if (status != 1) {
+			glDeleteShader(vertex);
+			glDeleteShader(fragment);
 			throw new RuntimeException(glGetShaderInfoLog(fragment));
 		}
 
@@ -56,18 +59,16 @@ public class Shader {
 		// Get the link status to check for errors
 		status = glGetProgrami(id, GL_LINK_STATUS);
 		if (status != 1) {
+			glDeleteProgram(id);
+			glDeleteShader(vertex);
+			glDeleteShader(fragment);
 			throw new RuntimeException(glGetProgramInfoLog(id));
 		}
+		
 		// Delete the vertex and fragment shaders as they are not needed
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
 
-	}
-
-	public void pointVertexAttribute(String name, int size, int stride, int offset) {
-		int location = glGetAttribLocation(id, name);
-		glEnableVertexAttribArray(location);
-		glVertexAttribPointer(location, size, GL_FLOAT, false, stride, offset);
 	}
 	
 
@@ -105,12 +106,12 @@ public class Shader {
 		}
 	}
 
-	public void use() {
+	public void bind() {
 		glUseProgram(id);
 	}
 	
 	
-	public void disable() {
+	public void unbind() {
 		glUseProgram(0);
 	}
 

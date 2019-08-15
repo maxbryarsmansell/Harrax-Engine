@@ -36,11 +36,13 @@ public class Window {
 			throw new IllegalStateException("Unable to initialize GLFW!");
 
 		glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-
+		
 		glfwDefaultWindowHints();
 		window = glfwCreateWindow(width, height, title, 0, 0);
 
 		glfwMakeContextCurrent(window);
+
+		glfwShowWindow(window);
 		
 		GL.createCapabilities();
 		
@@ -80,7 +82,8 @@ public class Window {
 			Event event = new MouseMovedEvent((float) xpos, (float) ypos);
 			Application.get().onEvent(event);
 		}));
-
+		
+		
 		System.out.println("Window and OpenGL initilisation successful.");
 	}
 

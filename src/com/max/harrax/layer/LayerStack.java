@@ -1,9 +1,7 @@
-package com.max.harrax;
+package com.max.harrax.layer;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
-
-import com.max.harrax.layer.Layer;
 
 public class LayerStack {
 

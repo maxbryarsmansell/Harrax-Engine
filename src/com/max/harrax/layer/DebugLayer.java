@@ -1,25 +1,38 @@
 package com.max.harrax.layer;
 
+import static org.lwjgl.opengl.GL40.*;
+
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
+
+import org.lwjgl.system.MemoryUtil;
+
 import com.max.harrax.events.Event;
 import com.max.harrax.events.EventDispatcher;
 import com.max.harrax.events.KeyPressedEvent;
 import com.max.harrax.events.MouseButtonPressedEvent;
 import com.max.harrax.events.MouseButtonReleasedEvent;
 import com.max.harrax.events.MouseMovedEvent;
-import com.max.harrax.graphicsOLD.Colour;
-import com.max.harrax.graphicsOLD.Renderer;
-import com.max.harrax.graphicsOLD.renderables.Label;
-import com.max.harrax.graphicsOLD.text.Font;
+import com.max.harrax.graphics.BufferElement;
+import com.max.harrax.graphics.BufferLayout;
+import com.max.harrax.graphics.IndexBuffer;
+import com.max.harrax.graphics.Shader;
+import com.max.harrax.graphics.ShaderDataType;
+import com.max.harrax.graphics.VertexArray;
+import com.max.harrax.graphics.VertexBuffer;
+
 
 public class DebugLayer extends Layer {
 	
-	Renderer renderer;
+	VertexArray vArray;
+	VertexBuffer vBuffer;
+	IndexBuffer iBuffer;
+	
+	Shader shader;
 	
 	public DebugLayer() {
 		super("Debug");
-		
-		renderer = new Renderer();
-		
 	}
 
 	@Override
@@ -27,7 +40,7 @@ public class DebugLayer extends Layer {
 		EventDispatcher dispatcher = new EventDispatcher(event);
 		dispatcher.dispatch(Event.EventType.KeyPressed, (Event e) -> (onKeyboardPress((KeyPressedEvent) e)));
 		dispatcher.dispatch(Event.EventType.MouseButtonPressed, (Event e) -> (onMousePressed((MouseButtonPressedEvent) e)));
-		//dispatcher.dispatch(Event.EventType.MouseButtonReleased, (Event e) -> (onMouseReleased((MouseButtonReleasedEvent) e)));
+		dispatcher.dispatch(Event.EventType.MouseButtonReleased, (Event e) -> (onMouseReleased((MouseButtonReleasedEvent) e)));
 		dispatcher.dispatch(Event.EventType.MouseMoved, (Event e) -> (onMouseMoved((MouseMovedEvent) e)));
 	}
 
@@ -48,7 +61,7 @@ public class DebugLayer extends Layer {
 	}
 	
 	private boolean onMouseMoved(MouseMovedEvent e) {
-		System.out.println(e.getPos().toString());
+		//System.out.println(e.getPos().toString());
 		
 		return true;
 	}
@@ -56,17 +69,51 @@ public class DebugLayer extends Layer {
 	@Override
 	public void onUpdate() {
 
-		renderer.begin();
+		shader.bind();
+		vArray.bind();
 		
-		renderer.submitText(Font.DEBUG_FONT, 20, 20, Colour.GREEN, "Hellow, World!", 1.0f);
+		glDrawElements(GL_TRIANGLES, vArray.getIndexBuffer().getCount(), GL_UNSIGNED_INT, 0);	
 		
-		renderer.end();
-		
+		shader.unbind();
+		vArray.unbind();
 	}
 
 	@Override
 	public void onAttach() {
 		System.out.println(name + " layer added to the layerstack.");
+	
+		float[] vertices = new float[] {
+				-0.5f, -0.5f, 0.0f, 0.8f, 0.3f, 0.8f, 1.0f,
+				 0.5f, -0.5f, 0.0f, 0.2f, 0.6f, 0.5f, 1.0f,
+				 0.0f,  0.5f, 0.0f, 0.8f, 0.2f, 0.2f, 1.0f
+		};
+		
+		int[] indices = new int[] {
+				0, 1, 2
+		};
+		
+		for (float f : vertices) {
+			//System.out.println(f);
+		}
+		
+		vBuffer = new VertexBuffer(vertices, 3 * 7);
+	
+		BufferLayout layout = new BufferLayout(
+				new BufferElement(ShaderDataType.Float3, "a_Position"),
+				new BufferElement(ShaderDataType.Float4, "a_Colour")
+				);
+		
+		vBuffer.setLayout(layout);
+		
+		vArray = new VertexArray();
+		
+		vArray.addVertexBuffer(vBuffer);
+		
+		iBuffer = new IndexBuffer(indices, 3);
+		vArray.setIndexBuffer(iBuffer);
+		
+		shader = new Shader("/shaders/basic.vert", "/shaders/basic.frag");
+
 	}
 
 	@Override

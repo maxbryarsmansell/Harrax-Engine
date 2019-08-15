@@ -1,17 +1,17 @@
 package com.max.harrax;
 
-import java.util.ListIterator;
-import java.util.Stack;
+import static org.lwjgl.opengl.GL40.*;
 
-import org.lwjgl.glfw.GLFW;
+import java.util.ListIterator;
 
 import com.max.harrax.events.Event;
-import com.max.harrax.events.EventDispatcher;
-import com.max.harrax.events.KeyPressedEvent;
-import com.max.harrax.events.WindowCloseEvent;
 import com.max.harrax.events.Event.EventType;
+import com.max.harrax.events.EventDispatcher;
+import com.max.harrax.events.WindowCloseEvent;
+import com.max.harrax.graphics.Renderer;
 import com.max.harrax.layer.DebugLayer;
 import com.max.harrax.layer.Layer;
+import com.max.harrax.layer.LayerStack;
 import com.max.harrax.utils.Timer;
 
 public class Application {
@@ -34,7 +34,7 @@ public class Application {
 	// Constructor
 	public Application() {
 
-		assert true : "There should only be one instance of application.";
+		assert (appInstance != null) : "There should only be one instance of application.";
 
 		appInstance = this;
 
@@ -76,11 +76,17 @@ public class Application {
 		float accumulator = 0f;
 
 		while (running) {
-
+			Renderer.clear();
 			timer.update();
-
+			
 			float delta = timer.getDelta();
 			accumulator += delta;
+
+			//glBegin(GL_TRIANGLES);
+			//glVertex3f(-0.5f, -0.5f, 0.0f);   glColor3f(0.0f, 1.0f, 0.0f);
+			//glVertex3f(0.8f, -0.5f, 0.0f);   glColor3f(0.0f, 1.0f, 0.8f);
+			//glVertex3f(0.0f, 0.5f, 1.0f);   glColor3f(0.0f, 1.0f, 0.7f);
+		    //glEnd();
 
 			// Update
 			while (accumulator >= TARGET_DELTA) {
