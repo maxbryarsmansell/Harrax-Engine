@@ -5,8 +5,11 @@ layout(location = 1) in vec4 a_Colour;
 
 out vec4 v_Colour;
 
+uniform mat4 u_ViewProjection;
+uniform mat4 u_Transform;
+
 void main()
 {
 	v_Colour = a_Colour;
-	gl_Position = vec4(a_Position, 1.0);
+	gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
 }

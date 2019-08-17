@@ -1,10 +1,12 @@
 package com.max.harrax.graphics;
 
-import static org.lwjgl.opengl.GL40.*;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 import java.util.ArrayList;
-
-import com.max.harrax.maths.Mat4;
 
 public class VertexArray {
 
@@ -40,6 +42,9 @@ public class VertexArray {
 					);
 			index++;
 		}
+		
+		vertexBuffer.unbind();
+		glBindVertexArray(0);
 		
 		vertexBuffers.add(vertexBuffer);
 	}

@@ -14,8 +14,8 @@ public class IndexBuffer {
 	private final int id;
 	private int count;
 	
-	public IndexBuffer(int[] indices, int count) {
-		this.count = count;
+	public IndexBuffer(IntBuffer indices) {
+		this.count = indices.capacity();
 		
 		id = glGenBuffers();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);

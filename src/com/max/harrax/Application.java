@@ -1,7 +1,5 @@
 package com.max.harrax;
 
-import static org.lwjgl.opengl.GL40.*;
-
 import java.util.ListIterator;
 
 import com.max.harrax.events.Event;
@@ -18,7 +16,6 @@ public class Application {
 
 	private static Application appInstance;
 
-	private DebugLayer debugLayer;
 	private LayerStack layerStack;
 	private Window window;
 	private Timer timer;
@@ -37,9 +34,9 @@ public class Application {
 		window.setVsync(true);
 		layerStack = new LayerStack();
 
-		debugLayer = new DebugLayer();
-		pushLayer(debugLayer);
-
+		pushLayer(new DebugLayer());
+		pushLayer(new DebugLayer());
+		
 		running = true;
 	}
 
@@ -58,8 +55,8 @@ public class Application {
 	public void onEvent(Event event) {
 		EventDispatcher dispatcher = new EventDispatcher(event);
 		dispatcher.dispatch(EventType.WindowClose, (Event e) -> (onWindowClose((WindowCloseEvent) e)));
+		
 		ListIterator<Layer> iterator = layerStack.end();
-
 		while (iterator.hasPrevious()) {
 			iterator.previous().onEvent(event);
 			if (event.isHandled)
@@ -68,8 +65,8 @@ public class Application {
 	}
 
 	public void run() {
-		float acc = 0.0f;
 		
+		float acc = 0.0f;
 		while (running) {
 			Renderer.clear();
 			

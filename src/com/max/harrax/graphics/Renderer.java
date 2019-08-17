@@ -2,17 +2,34 @@ package com.max.harrax.graphics;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glDrawElements;
+
+import com.max.harrax.maths.Mat4;
 
 public class Renderer {
 
-	public static void beginScene() {
-		
+	private static Mat4 viewProjectionMatrix;
+	
+	public static void beginScene(Mat4 viewProjectionMatrix) {
+		Renderer.viewProjectionMatrix = viewProjectionMatrix;
 	}
 	
-	public static void sumbit() {
+	public static void submit(Shader shader, VertexArray vertexArray, Mat4 transform) {
+		shader.bind();
 		
+		shader.setUniformMatrix4fv("u_ViewProjection", viewProjectionMatrix);
+		shader.setUniformMatrix4fv("u_Transform", transform);
+		
+		vertexArray.bind();
+		
+		glDrawElements(GL_TRIANGLES, vertexArray.getIndexBuffer().getCount(), GL_UNSIGNED_INT, 0);	
+		
+		vertexArray.unbind();
+		shader.unbind();
 	}
 	
 	public static void endScene() {

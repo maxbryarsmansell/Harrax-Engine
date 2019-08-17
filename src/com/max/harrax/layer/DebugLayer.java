@@ -1,12 +1,9 @@
 package com.max.harrax.layer;
 
-import static org.lwjgl.opengl.GL40.*;
-
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
 
-import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.BufferUtils;
 
 import com.max.harrax.events.Event;
 import com.max.harrax.events.EventDispatcher;
@@ -17,10 +14,12 @@ import com.max.harrax.events.MouseMovedEvent;
 import com.max.harrax.graphics.BufferElement;
 import com.max.harrax.graphics.BufferLayout;
 import com.max.harrax.graphics.IndexBuffer;
+import com.max.harrax.graphics.Renderer;
 import com.max.harrax.graphics.Shader;
 import com.max.harrax.graphics.ShaderDataType;
 import com.max.harrax.graphics.VertexArray;
 import com.max.harrax.graphics.VertexBuffer;
+import com.max.harrax.maths.Mat4;
 
 
 public class DebugLayer extends Layer {
@@ -30,6 +29,7 @@ public class DebugLayer extends Layer {
 	IndexBuffer iBuffer;
 	
 	Shader shader;
+
 	
 	public DebugLayer() {
 		super("Debug");
@@ -45,17 +45,17 @@ public class DebugLayer extends Layer {
 	}
 
 	private boolean onKeyboardPress(KeyPressedEvent e) {
-		System.out.println((char)e.getKeyCode());
+		System.out.println((char)e.getKeyCode() + " pressed");
 		return true;
 	}
 	
 	private boolean onMousePressed(MouseButtonPressedEvent e) {
-		System.out.println(e.getMouseButton());
+		System.out.println(e.getMouseButton() == 0 ? "Mouse 1 pressed" : (e.getMouseButton() == 1 ? "Mouse 2 pressed" : "Other Mouse pressed"));
 		return true;
 	}
 	
 	private boolean onMouseReleased(MouseButtonReleasedEvent e) {
-		System.out.println(e.getMouseButton());
+		//System.out.println(e.getMouseButton() == 0 ? "Mouse 1 released" : (e.getMouseButton() == 1 ? "Mouse 2 released" : "Other Mouse released"));
 		
 		return true;
 	}
@@ -69,18 +69,16 @@ public class DebugLayer extends Layer {
 	@Override
 	public void onUpdate(float delta) {
 
-		shader.bind();
-		vArray.bind();
+		Renderer.beginScene(new Mat4());
 		
-		glDrawElements(GL_TRIANGLES, vArray.getIndexBuffer().getCount(), GL_UNSIGNED_INT, 0);	
+		Renderer.submit(shader, vArray, Mat4.Scale(2.0f));
 		
-		shader.unbind();
-		vArray.unbind();
+		Renderer.endScene(); 
 	}
 
 	@Override
 	public void onAttach() {
-		System.out.println(name + " layer added to the layerstack.");
+		System.out.println(name + " layer added to the layer stack.");
 	
 		float[] vertices = new float[] {
 				-0.5f, -0.5f, 0.0f, 0.8f, 0.3f, 0.8f, 1.0f,
@@ -88,15 +86,19 @@ public class DebugLayer extends Layer {
 				 0.0f,  0.5f, 0.0f, 0.8f, 0.2f, 0.2f, 1.0f
 		};
 		
+		FloatBuffer vert = BufferUtils.createFloatBuffer(vertices.length);
+		vert.put(vertices);
+		vert.flip();
+		
 		int[] indices = new int[] {
 				0, 1, 2
 		};
 		
-		for (float f : vertices) {
-			//System.out.println(f);
-		}
+		IntBuffer ind = BufferUtils.createIntBuffer(indices.length);
+		ind.put(indices);
+		ind.flip();
 		
-		vBuffer = new VertexBuffer(vertices, 3 * 7);
+		vBuffer = new VertexBuffer(vert);
 	
 		BufferLayout layout = new BufferLayout(
 				new BufferElement(ShaderDataType.Float3, "a_Position"),
@@ -109,15 +111,14 @@ public class DebugLayer extends Layer {
 		
 		vArray.addVertexBuffer(vBuffer);
 		
-		iBuffer = new IndexBuffer(indices, 3);
+		iBuffer = new IndexBuffer(ind);
 		vArray.setIndexBuffer(iBuffer);
 		
 		shader = new Shader("/shaders/basic.vert", "/shaders/basic.frag");
-
 	}
 
 	@Override
 	public void onDetach() {
-		System.out.println(name + " layer removed from the layerstack.");
+		System.out.println(name + " layer removed from the layer stack.");
 	}
 }

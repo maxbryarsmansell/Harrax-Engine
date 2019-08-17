@@ -3,194 +3,109 @@ package com.max.harrax.maths;
 import java.nio.FloatBuffer;
 import java.text.DecimalFormat;
 
+import org.lwjgl.BufferUtils;
+
 public class Vec2 {
-	
+
 	/*
 	 * x and y components, represented as floats.
 	 */
-	
-	public float x;						
+
+	public float x;
 	public float y;
-	
-	/*
-	 * Default constructor.
-	 * Values initialised to zero.
-	 */
-	
-	public Vec2() {						
+
+
+	public Vec2() {
 		this.x = 0.0f;
 		this.y = 0.0f;
 	}
-	
-	/*
-	 * Constructor to initialise with given values.
-	 */
-	
-	public Vec2(float x, float y) {			
+
+	public Vec2(final float x, final float y) {
 		this.x = x;
 		this.y = y;
 	}
-	
-	/*
-	 * Copy constructor.
-	 */
-	
-	public Vec2(Vec2 other) {
+
+	public Vec2(final Vec2 other) {
 		this.x = other.x;
 		this.y = other.y;
 	}
-	
-	public Vec2 copy() {
-		return new Vec2(x, y);
-	}
-	
-	/*
-	 * Add another vector to this. 
-	 */
 
-	public Vec2 Add(Vec2 other) {		
-		x += other.x;
-		y += other.y;
-		return this;
+	public Vec2 add(final Vec2 other) {
+		return new Vec2(x + other.x, y + other.y);
 	}
-	
-	/*
-	 * Subtract another vector from this. 
-	 */
-	
-	public Vec2 Subtract(Vec2 other) {			
-		x -= other.x;
-		y -= other.y;
-		return this;
-	}
-	
-	/*
-	 * Multiply this vector by another one. 
-	 */
-	
-	public Vec2 Multiply(Vec2 other) {			
-		x *= other.x;
-		y *= other.y;
-		return this;
-	}
-	
-	/*
-	 * Divide this vector by another one. 
-	 */
-	
-	public Vec2 Divide(Vec2 other) {		
-		x /= other.x;
-		y /= other.y;
-		return this;	
-	}
-	
-	/*
-	 * Add a scalar to this.
-	 */
-	
-	public Vec2 Add(float value) {			
-		x += value;
-		y += value;
-		return this;
-	}
-	
-	/*
-	 * Subtract a scalar from this.
-	 */
 
-	
-	public Vec2 Subtract(float value) {			
-		x -= value;
-		y -= value;
-		return this;
+	public Vec2 sub(final Vec2 other) {
+		return new Vec2(x + other.x, y + other.y);
 	}
-	
-	/*
-	 * Multiply this by a scalar.
-	 */
 
-	
-	public Vec2 Multiply(float value) {			
-		x *= value;
-		y *= value;
-		return this;
+	public Vec2 mult(final float scalar) {
+		return new Vec2(x * scalar, y * scalar);
+	}
+
+	public Vec2 div(float scalar) {
+		return new Vec2(x / scalar, y / scalar);
 	}
 	
-	/*
-	 * Divide this by a scalar.
-	 */
-	
-	public Vec2 Divide(float value) { 		
-		x /= value;
-		y /= value;
-		return this;
+	public float dot(final Vec2 other) {
+		return (x * other.x) + (y * other.y);
 	}
-	
-	/*
-	 * Calculate the distance between this and another vector.
-	 */
-	
-	public float Distance(Vec2 other) { 				
-		float a = x - other.x;						
-		float b = y - other.y;							
-		return (float) Math.sqrt(a * a + b * b);		
+
+	public float dist(final Vec2 other) {
+		float a = x - other.x;
+		float b = y - other.y;
+		return (float) Math.sqrt(a * a + b * b);
 	}
-	
-	/*
-	 * Calculate the magnitude of this vector.
-	 */
-	
-	public float Magnitude() {							
-		return (float) Math.sqrt(x * x + y * y);		
+
+	public float mag() {
+		return (float) Math.sqrt(x * x + y * y);
 	}
-	
-	/*
-	 * Normalize this vector.
-	 */
-	
-	public Vec2 Normalize() {
-		float length = Magnitude();
+
+	public void normalize() {
+		float length = mag();
 		x /= length;
 		y /= length;
-		return this;		
 	}
-	
-	public float Dot(Vec2 other) {
-		return (this.x * other.x) + (this.y * other.y);
-	}
-	
-	/*
-	 * Negate this vector.
-	 */
-	
-	public Vec2 Negate() {					
+
+	public void negate() {
 		x = -x;
 		y = -y;
-		return this;
 	}
-	
-	/*
-	 * Return a string version of the vector for printing.
-	 */
-	
-	public String toString() {													
-		DecimalFormat df = new DecimalFormat("0.00");
-		return ("(" + df.format(x) + ", " + df.format(y) +")");
-	}
-	
-	/*
-	 * Return a float buffer which represents the vector
-	 */
-	
-	public void ToBuffer(FloatBuffer buffer) {
-        buffer.put(x).put(y);
-        buffer.flip();
-    }
 	
 	public Vec4 toVec4() {
 		return new Vec4(x, y, 0, 1);
 	}
 	
-	
-	
+	public boolean equals(final Vec2 other) {
+		if (this == other) {
+			return true;
+		}
+		if (other == null) {
+			return false;
+		}
+		
+		if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) {
+			return false;
+		}
+		if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) {
+			return false;
+		}
+		
+		return true;
+	}
+
+	public String toString() {
+		DecimalFormat df = new DecimalFormat("0.00");
+		return new StringBuilder().append("(").append(df.format(x)).append(",").append(df.format(y)).append(")")
+				.toString();
+	}
+
+	public FloatBuffer getBuffer() {
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(2);
+
+		buffer.put(x).put(y);
+		buffer.flip();
+
+		return buffer;
+	}
+
 }

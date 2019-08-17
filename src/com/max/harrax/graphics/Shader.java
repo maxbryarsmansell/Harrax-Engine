@@ -68,7 +68,6 @@ public class Shader {
 		// Delete the vertex and fragment shaders as they are not needed
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
-
 	}
 	
 
@@ -91,8 +90,7 @@ public class Shader {
 	public void setUniform2fv(String name, Vec2 value) {
 		int location = glGetUniformLocation(id, name);
 		try (MemoryStack stack = MemoryStack.stackPush()) {
-			FloatBuffer buffer = stack.mallocFloat(2);
-			value.ToBuffer(buffer);
+			FloatBuffer buffer = value.getBuffer();
 			glUniform2fv(location, buffer);
 		}
 	}

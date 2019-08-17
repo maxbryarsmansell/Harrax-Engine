@@ -3,158 +3,136 @@ package com.max.harrax.maths;
 import java.nio.FloatBuffer;
 import java.text.DecimalFormat;
 
-public class Vec4 implements Cloneable{
-	
-	public float x;						
-	public float y;						
-	public float z;						
-	public float w;						
-	
-	public Vec4() {						
+import org.lwjgl.BufferUtils;
+
+public class Vec4 implements Cloneable {
+
+	/*
+	 * x, y, z and w components, represented as floats.
+	 */
+
+	public float x;
+	public float y;
+	public float z;
+	public float w;
+
+	public Vec4() {
 		this.x = 0.0f;
 		this.y = 0.0f;
 		this.z = 0.0f;
 		this.w = 0.0f;
 	}
-	
-	public Vec4(float x, float y, float z, float w) {			
+
+	public Vec4(final float x, final float y, final float z, final float w) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.w = w;
 	}
-	
-	public Vec4(Vec4 other) {
+
+	public Vec4(final Vec4 other) {
 		this.x = other.x;
 		this.y = other.y;
 		this.z = other.z;
 		this.w = other.w;
 	}
 
-	public Vec4 Add(Vec4 other) {		
-		x += other.x;
-		y += other.y;
-		z += other.z;
-		w += other.w;
-		return this;
+	public Vec4(final Vec3 other, final float w) {
+		this.x = other.x;
+		this.y = other.y;
+		this.z = other.z;
+		this.w = w;
 	}
-	
-	public Vec4 Subtract(Vec4 other) {			
-		x -= other.x;
-		y -= other.y;
-		z -= other.z;
-		w -= other.w;
-		return this;
+
+	public Vec4 add(final Vec4 other) {
+		return new Vec4(x + other.x, y + other.y, z + other.z, w + other.w);
 	}
-	
-	public Vec4 Multiply(Vec4 other) {			
-		x *= other.x;
-		y *= other.y;
-		z *= other.z;
-		w *= other.w;
-		return this;
+
+	public Vec4 sub(final Vec4 other) {
+		return new Vec4(x - other.x, y - other.y, z - other.z, w - other.w);
 	}
-	
-	public Vec4 Divide(Vec4 other) {		
-		x /= other.x;
-		y /= other.y;
-		z /= other.z;
-		w /= other.w;
-		return this;	
+
+	public Vec4 mult(final float scalar) {
+		return new Vec4(x * scalar, y * scalar, z * scalar, w * scalar);
 	}
-	
-	public Vec4 Add(float value) {			
-		x += value;
-		y += value;
-		z += value;
-		w += value;
-		return this;
+
+	public Vec4 div(float scalar) {
+		return new Vec4(x / scalar, y / scalar, z / scalar, w / scalar);
 	}
-	
-	public Vec4 Subtract(float value) {			
-		x -= value;
-		y -= value;
-		z -= value;
-		w -= value;
-		return this;
+
+	public float dot(final Vec4 other) {
+		return (x * other.x) + (y * other.y) + (z * other.z) + (w * other.z);
 	}
-	
-	public Vec4 Multiply(float value) {			
-		x *= value;
-		y *= value;
-		z *= value;
-		w *= value;
-		return this;
+
+	public float dist(final Vec4 other) {
+		float a = x - other.x;
+		float b = y - other.y;
+		float c = z - other.z;
+		float d = w - other.w;
+		return (float) Math.sqrt(a * a + b * b + c * c + d * d);
 	}
-	
-	public Vec4 Divide(float value) { 		
-		x /= value;
-		y /= value;
-		z /= value;
-		w /= value;
-		return this;
+
+	public float mag() {
+		return (float) Math.sqrt(x * x + y * y + z * z + w * w);
 	}
-	
-	/*
-	 * Multiply this vector by a given matrix.
-	 */
-	
-	public Vec4 Multiply(Mat4 other) {		
-		Vec4 temp = new Vec4(x, y, z, w);
-		this.x = temp.x * other.elements[0] + temp.y * other.elements[4] + temp.z * other.elements[8] + temp.w * other.elements[12];
-		this.y = temp.x * other.elements[1] + temp.y * other.elements[5] + temp.z * other.elements[9] + temp.w * other.elements[13];
-		this.z = temp.x * other.elements[2] + temp.y * other.elements[6] + temp.z * other.elements[10] + temp.w * other.elements[14]; 
-		this.w = temp.x * other.elements[3] + temp.y * other.elements[7] + temp.z * other.elements[11] + temp.w * other.elements[15]; 
-		return this;
-	}
-	
-	public float Distance(Vec4 other) { 				
-		float a = x - other.x;					
-		float b = y - other.y;						
-		float c = z - other.z;							
-		float d = w - other.w;								
-		return (float) Math.sqrt(a * a + b * b + c * c + d * d);		
-	}
-	
-	public float Magnitude() {								
-		return (float) Math.sqrt(x * x + y * y + z * z + w * w);		
-	}
-	
-	public Vec4 Normalize() {
-		float length = Magnitude();
+
+	public void normalize() {
+		float length = mag();
 		x /= length;
 		y /= length;
 		z /= length;
 		w /= length;
-		return this;		
 	}
-	
-	public Vec4 Negate() {					
+
+	public Vec4 norm() {
+		float length = mag();
+		return new Vec4(x / length, y / length, z / length, w / length);
+	}
+
+	public void negate() {
 		x = -x;
 		y = -y;
 		z = -z;
 		w = -w;
-		return this;
 	}
-	
-	public String toString() {												
+
+	public boolean equals(final Vec4 other) {
+		if (this == other) {
+			return true;
+		}
+		if (other == null) {
+			return false;
+		}
+
+		if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) {
+			return false;
+		}
+		if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) {
+			return false;
+		}
+		if (Float.floatToIntBits(z) != Float.floatToIntBits(other.z)) {
+			return false;
+		}
+		if (Float.floatToIntBits(w) != Float.floatToIntBits(other.w)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public String toString() {
 		DecimalFormat df = new DecimalFormat("0.00");
-		return ("(" + df.format(x) + ", " + df.format(y) + ", " + df.format(z) + ", " + df.format(w) +")\n");
+		return new StringBuilder().append("(").append(df.format(x)).append(", ").append(df.format(y)).append(",")
+				.append(df.format(z)).append(", ").append(df.format(w)).append(")").toString();
 	}
-	
-	/*
-	 * Return a float buffer which represents the vector
-	 */
-	
-	public void toBuffer(FloatBuffer buffer) {
-        buffer.put(x).put(y).put(z).put(w);
-        buffer.flip();
-    }
-	
-	public Vec2 toVec2() {
-        return new Vec2(x, y);
-    }
-	
-	
-	
+
+	public FloatBuffer getBuffer() {
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(3);
+
+		buffer.put(x).put(y).put(z).put(w);
+		buffer.flip();
+
+		return buffer;
+	}
+
 }
