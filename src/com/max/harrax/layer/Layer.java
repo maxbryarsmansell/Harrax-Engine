@@ -15,7 +15,7 @@ public abstract class Layer implements EventListener{
 	
 	public abstract void onDetach();
 	
-	public abstract void onUpdate();
+	public abstract void onUpdate(float delta);
 	
 	public boolean isVisible() {
 		return isVisible;

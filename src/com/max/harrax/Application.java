@@ -16,12 +16,6 @@ import com.max.harrax.utils.Timer;
 
 public class Application {
 
-	/*
-	 * Variables for The target update rate The target time (delta) between updates
-	 */
-	private static final int TARGET_UPS = 60;
-	private static final float TARGET_DELTA = 1f / TARGET_UPS;
-
 	private static Application appInstance;
 
 	private DebugLayer debugLayer;
@@ -40,6 +34,7 @@ public class Application {
 
 		timer = new Timer();
 		window = new Window();
+		window.setVsync(true);
 		layerStack = new LayerStack();
 
 		debugLayer = new DebugLayer();
@@ -73,32 +68,26 @@ public class Application {
 	}
 
 	public void run() {
-		float accumulator = 0f;
-
+		float acc = 0.0f;
+		
 		while (running) {
 			Renderer.clear();
-			timer.update();
 			
+			timer.update();
 			float delta = timer.getDelta();
-			accumulator += delta;
-
-			//glBegin(GL_TRIANGLES);
-			//glVertex3f(-0.5f, -0.5f, 0.0f);   glColor3f(0.0f, 1.0f, 0.0f);
-			//glVertex3f(0.8f, -0.5f, 0.0f);   glColor3f(0.0f, 1.0f, 0.8f);
-			//glVertex3f(0.0f, 0.5f, 1.0f);   glColor3f(0.0f, 1.0f, 0.7f);
-		    //glEnd();
-
-			// Update
-			while (accumulator >= TARGET_DELTA) {
-				accumulator -= TARGET_DELTA;
-
-				ListIterator<Layer> iterator = layerStack.start();
-
-				while (iterator.hasNext()) {
-					iterator.next().onUpdate();
-				}
+			
+			acc += delta;
+			if(acc >= 1.0f) {
+				acc = 0.0f;
+				System.out.println(timer.getUps() + " ups.");
 			}
+			
+			ListIterator<Layer> iterator = layerStack.start();
 
+			while (iterator.hasNext()) {
+				iterator.next().onUpdate(delta);
+			}
+			
 			window.onUpdate();
 		}
 

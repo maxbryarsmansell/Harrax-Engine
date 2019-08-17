@@ -67,7 +67,7 @@ public class DebugLayer extends Layer {
 	}
 
 	@Override
-	public void onUpdate() {
+	public void onUpdate(float delta) {
 
 		shader.bind();
 		vArray.bind();

@@ -15,7 +15,7 @@ public class State {
 
 	public void onUpdate(float delta) {
 		for (Layer layer : layerStack) {
-			layer.onUpdate();
+			layer.onUpdate(delta);
 		}
 	}
 
