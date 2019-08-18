@@ -35,7 +35,6 @@ public class Application {
 		layerStack = new LayerStack();
 
 		pushLayer(new DebugLayer());
-		pushLayer(new DebugLayer());
 		
 		running = true;
 	}

@@ -95,7 +95,7 @@ public class Vec2 {
 
 	public String toString() {
 		DecimalFormat df = new DecimalFormat("0.00");
-		return new StringBuilder().append("(").append(df.format(x)).append(",").append(df.format(y)).append(")")
+		return new StringBuilder().append("(").append(df.format(x)).append(", ").append(df.format(y)).append(")")
 				.toString();
 	}
 

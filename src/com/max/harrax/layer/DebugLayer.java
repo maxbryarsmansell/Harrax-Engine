@@ -5,6 +5,8 @@ import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
 
+import static org.lwjgl.opengl.GL40.*;
+
 import com.max.harrax.events.Event;
 import com.max.harrax.events.EventDispatcher;
 import com.max.harrax.events.KeyPressedEvent;
@@ -69,9 +71,9 @@ public class DebugLayer extends Layer {
 	@Override
 	public void onUpdate(float delta) {
 
-		Renderer.beginScene(new Mat4());
+		Renderer.beginScene(Mat4.IDENTITY);
 		
-		Renderer.submit(shader, vArray, Mat4.Scale(2.0f));
+		Renderer.submit(shader, vArray, Mat4.IDENTITY);
 		
 		Renderer.endScene(); 
 	}
@@ -114,6 +116,7 @@ public class DebugLayer extends Layer {
 		iBuffer = new IndexBuffer(ind);
 		vArray.setIndexBuffer(iBuffer);
 		
+		System.out.println("OpenGL version is " +  glGetString(GL_VERSION));
 		shader = new Shader("/shaders/basic.vert", "/shaders/basic.frag");
 	}
 

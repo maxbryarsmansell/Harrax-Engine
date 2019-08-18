@@ -59,6 +59,14 @@ public class Vec4 implements Cloneable {
 	public Vec4 div(float scalar) {
 		return new Vec4(x / scalar, y / scalar, z / scalar, w / scalar);
 	}
+	
+	public Vec4 mult(final Mat4 other) {
+		float nx = x * other.elements[0] + y * other.elements[4] + z * other.elements[8] + z * other.elements[12];
+		float ny = x * other.elements[1] + y * other.elements[5] + z * other.elements[9] + z * other.elements[13];
+		float nz = x * other.elements[2] + y * other.elements[6] + z * other.elements[10] + z * other.elements[14]; 
+		float nw = x * other.elements[3] + y * other.elements[7] + z * other.elements[11] + z * other.elements[15]; 
+		return new Vec4(nx, ny, nz, nw);
+	}
 
 	public float dot(final Vec4 other) {
 		return (x * other.x) + (y * other.y) + (z * other.z) + (w * other.z);
@@ -122,7 +130,7 @@ public class Vec4 implements Cloneable {
 
 	public String toString() {
 		DecimalFormat df = new DecimalFormat("0.00");
-		return new StringBuilder().append("(").append(df.format(x)).append(", ").append(df.format(y)).append(",")
+		return new StringBuilder().append("(").append(df.format(x)).append(", ").append(df.format(y)).append(", ")
 				.append(df.format(z)).append(", ").append(df.format(w)).append(")").toString();
 	}
 

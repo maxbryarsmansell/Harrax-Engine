@@ -35,7 +35,6 @@ public class Shader {
 		// Get the compilation status to check for errors
 		status = glGetShaderi(vertex, GL_COMPILE_STATUS);
 		if (status != 1) {
-			glDeleteShader(vertex);
 			throw new RuntimeException(glGetShaderInfoLog(vertex));
 		}
 
@@ -46,8 +45,6 @@ public class Shader {
 		// Get the compilation status to check for errors
 		status = glGetShaderi(fragment, GL_COMPILE_STATUS);
 		if (status != 1) {
-			glDeleteShader(vertex);
-			glDeleteShader(fragment);
 			throw new RuntimeException(glGetShaderInfoLog(fragment));
 		}
 
@@ -59,9 +56,6 @@ public class Shader {
 		// Get the link status to check for errors
 		status = glGetProgrami(id, GL_LINK_STATUS);
 		if (status != 1) {
-			glDeleteProgram(id);
-			glDeleteShader(vertex);
-			glDeleteShader(fragment);
 			throw new RuntimeException(glGetProgramInfoLog(id));
 		}
 		
@@ -99,7 +93,7 @@ public class Shader {
 		int location = glGetUniformLocation(id, name);
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 			FloatBuffer buffer = stack.mallocFloat(4 * 4);
-			value.toBuffer(buffer);
+			value.getBuffer(buffer);
 			glUniformMatrix4fv(location, false, buffer);
 		}
 	}

@@ -56,6 +56,12 @@ public class Vec3 {
 		return (x * other.x) + (y * other.y) + (z * other.z);
 	}
 
+	public Vec3 cross(final Vec3 other) {
+		return new Vec3(y * other.z - z * other.y,
+						z * other.x - z * other.z,
+						x * other.y - y * other.x);
+	}
+	
 	public float dist(final Vec3 other) {
 		float a = x - other.x;
 		float b = y - other.y;
@@ -112,7 +118,7 @@ public class Vec3 {
 
 	public String toString() {
 		DecimalFormat df = new DecimalFormat("0.00");
-		return new StringBuilder().append("(").append(df.format(x)).append(", ").append(df.format(y)).append("," ).append(df.format(z)).append(")")
+		return new StringBuilder().append("(").append(df.format(x)).append(", ").append(df.format(y)).append(", " ).append(df.format(z)).append(")")
 				.toString();
 	}
 

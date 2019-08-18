@@ -5,272 +5,230 @@ import java.text.DecimalFormat;
 
 public class Mat4 {
 
+	
+	public static final Mat4 ZERO = new Mat4();
+	public static final Mat4 IDENTITY = new Mat4(1.0f);
+	
 	/*
-	 * Elements are represented by a 1D float array of size 16. The default values
-	 * in the array are zero (the zero matrix).
+	 * Elements are represented by a float array in column major form.
 	 */
+	
+	public final float[] elements = new float[16];
 
-	public float[] elements = new float[16];
-
-	/*
-	 * The default constructor. The default matrix is the identity matrix.
-	 */
-
+	public Mat4(final float diagonal) {
+		this.elements[0 + 0 * 4] = diagonal;
+		this.elements[1 + 1 * 4] = diagonal;
+		this.elements[2 + 2 * 4] = diagonal;
+		this.elements[3 + 3 * 4] = diagonal;
+	}
+	
 	public Mat4() {
-		this.elements[0 + 0 * 4] = 1.0f;
-		this.elements[1 + 1 * 4] = 1.0f;
-		this.elements[2 + 2 * 4] = 1.0f;
-		this.elements[3 + 3 * 4] = 1.0f;
+		this(1.0f);
 	}
 
-	/*
-	 * Constructor to initialise the matrix with given elements.
-	 */
-
-	public Mat4(float[] elements) {
+	public Mat4(final float[] elements) {
 		System.arraycopy(elements, 0, this.elements, 0, 16);
 	}
 	
-	/*
-	 * Copy constructor.
-	 */
+	public Mat4(final Mat4 other) {
+		System.arraycopy(other.elements, 0, this.elements, 0, 16);
+	}
+
+	public Mat4 add(final float scalar) {
+		float[] newElements = new float[16];
+		for (int i = 0; i < this.elements.length; i++) {
+			newElements[i] = this.elements[i] + scalar;
+		}
+		return new Mat4(newElements);
+	}
+
+	public Mat4 sub(final float scalar) {
+		float[] newElements = new float[16];
+		for (int i = 0; i < this.elements.length; i++) {
+			newElements[i] = this.elements[i] - scalar;
+		}
+		return new Mat4(newElements);
+	}
+
+	public Mat4 mult(final float scalar) {
+		float[] newElements = new float[16];
+		for (int i = 0; i < this.elements.length; i++) {
+			newElements[i] = this.elements[i] * scalar;
+		}
+		return new Mat4(newElements);
+	}
 	
-	public Mat4(Mat4 other) {
-		this.elements = other.elements.clone();
+	public Vec4 mult(final Vec4 other) {
+		return other.mult(this);
 	}
 
-	/*
-	 * Add scalar to matrix.
-	 */
-
-	public Mat4 Add(float value) {
+	public Mat4 add(final Mat4 other) {
+		float[] newElements = new float[16];
 		for (int i = 0; i < this.elements.length; i++) {
-			this.elements[i] += value;
+			newElements[i] = this.elements[i] + other.elements[i];
 		}
-		return this;
+		return new Mat4(newElements);
 	}
 
-	/*
-	 * Subtract scalar from matrix.
-	 */
 
-	public Mat4 Subtract(float value) {
+	public Mat4 sub(final Mat4 other) {
+		float[] newElements = new float[16];
 		for (int i = 0; i < this.elements.length; i++) {
-			this.elements[i] -= value;
+			newElements[i] = this.elements[i] - other.elements[i];
 		}
-		return this;
+		return new Mat4(newElements);
 	}
 
-	/*
-	 * Multiply matrix by scalar.
-	 */
-
-	public Mat4 Multiply(float value) {
-		for (int i = 0; i < this.elements.length; i++) {
-			this.elements[i] *= value;
-		}
-		return this;
-	}
-
-	/*
-	 * Add given vector to the matrix.
-	 */
-
-	public Mat4 Add(Vec4 other) {
-		for (int i = 0; i < this.elements.length; i += 4) {
-			this.elements[i + 0] += other.x;
-			this.elements[i + 1] += other.y;
-			this.elements[i + 2] += other.z;
-			this.elements[i + 3] += other.w;
-		}
-		return this;
-	}
-
-	/*
-	 * Subtract given vector from the matrix.
-	 */
-
-	public Mat4 Subtract(Vec4 other) {
-		for (int i = 0; i < this.elements.length; i += 4) {
-			this.elements[i + 0] -= other.x;
-			this.elements[i + 1] -= other.y;
-			this.elements[i + 2] -= other.z;
-			this.elements[i + 3] -= other.w;
-		}
-		return this;
-	}
-
-	/*
-	 * Add another matrix to the matrix.
-	 */
-
-	public Mat4 Add(Mat4 other) {
-		for (int i = 0; i < this.elements.length; i++) {
-			elements[i] += other.elements[i];
-		}
-		return this;
-	}
-
-	/*
-	 * Subtract another matrix from the matrix.
-	 */
-
-	public Mat4 Subtract(Mat4 other) {
-		for (int i = 0; i < this.elements.length; i++) {
-			elements[i] -= other.elements[i];
-		}
-		return this;
-	}
-
-	/*
-	 * Multiply another matrix with the matrix.
-	 */
-
-	public Mat4 Multiply(Mat4 other) {
-		float[] data = new float[16];
+	public Mat4 mult(final Mat4 other) {
+		float[] newElements = new float[16];
 		for (int row = 0; row < 4; row++) {
 			for (int col = 0; col < 4; col++) {
 				float sum = 0.0f;
 				for (int e = 0; e < 4; e++) {
 					sum += elements[e + row * 4] * other.elements[col + e * 4];
 				}
-				data[col + row * 4] = sum;
+				newElements[col + row * 4] = sum;
 			}
 		}
-		System.arraycopy(data, 0, elements, 0, 16);
-		return this;
+		return new Mat4(newElements);
 	}
 	
-	public Mat4 Invert() {
-		float[] temp = new float[16];
+	public Mat4 transpose() {
+		float[] newElements = new float[16];
+		for (int row = 0; row < 4; row++) {
+			for (int col = 0; col < 4; col++) {
+				newElements[row + col * 4] = elements[col + row * 4];
+			}
+		}
+		return new Mat4(newElements);
+	}
+	
+	public Mat4 inverse() {
+		float[] newElements = new float[16];
 
-		temp[0] = elements[5] * elements[10] * elements[15] -
+		newElements[0] = elements[5] * elements[10] * elements[15] -
 			elements[5] * elements[11] * elements[14] -
 			elements[9] * elements[6] * elements[15] +
 			elements[9] * elements[7] * elements[14] +
 			elements[13] * elements[6] * elements[11] -
 			elements[13] * elements[7] * elements[10];
 
-		temp[4] = -elements[4] * elements[10] * elements[15] +
+		newElements[4] = -elements[4] * elements[10] * elements[15] +
 			elements[4] * elements[11] * elements[14] +
 			elements[8] * elements[6] * elements[15] -
 			elements[8] * elements[7] * elements[14] -
 			elements[12] * elements[6] * elements[11] +
 			elements[12] * elements[7] * elements[10];
 
-		temp[8] = elements[4] * elements[9] * elements[15] -
+		newElements[8] = elements[4] * elements[9] * elements[15] -
 			elements[4] * elements[11] * elements[13] -
 			elements[8] * elements[5] * elements[15] +
 			elements[8] * elements[7] * elements[13] +
 			elements[12] * elements[5] * elements[11] -
 			elements[12] * elements[7] * elements[9];
 
-		temp[12] = -elements[4] * elements[9] * elements[14] +
+		newElements[12] = -elements[4] * elements[9] * elements[14] +
 			elements[4] * elements[10] * elements[13] +
 			elements[8] * elements[5] * elements[14] -
 			elements[8] * elements[6] * elements[13] -
 			elements[12] * elements[5] * elements[10] +
 			elements[12] * elements[6] * elements[9];
 
-		temp[1] = -elements[1] * elements[10] * elements[15] +
+		newElements[1] = -elements[1] * elements[10] * elements[15] +
 			elements[1] * elements[11] * elements[14] +
 			elements[9] * elements[2] * elements[15] -
 			elements[9] * elements[3] * elements[14] -
 			elements[13] * elements[2] * elements[11] +
 			elements[13] * elements[3] * elements[10];
 
-		temp[5] = elements[0] * elements[10] * elements[15] -
+		newElements[5] = elements[0] * elements[10] * elements[15] -
 			elements[0] * elements[11] * elements[14] -
 			elements[8] * elements[2] * elements[15] +
 			elements[8] * elements[3] * elements[14] +
 			elements[12] * elements[2] * elements[11] -
 			elements[12] * elements[3] * elements[10];
 
-		temp[9] = -elements[0] * elements[9] * elements[15] +
+		newElements[9] = -elements[0] * elements[9] * elements[15] +
 			elements[0] * elements[11] * elements[13] +
 			elements[8] * elements[1] * elements[15] -
 			elements[8] * elements[3] * elements[13] -
 			elements[12] * elements[1] * elements[11] +
 			elements[12] * elements[3] * elements[9];
 
-		temp[13] = elements[0] * elements[9] * elements[14] -
+		newElements[13] = elements[0] * elements[9] * elements[14] -
 			elements[0] * elements[10] * elements[13] -
 			elements[8] * elements[1] * elements[14] +
 			elements[8] * elements[2] * elements[13] +
 			elements[12] * elements[1] * elements[10] -
 			elements[12] * elements[2] * elements[9];
 
-		temp[2] = elements[1] * elements[6] * elements[15] -
+		newElements[2] = elements[1] * elements[6] * elements[15] -
 			elements[1] * elements[7] * elements[14] -
 			elements[5] * elements[2] * elements[15] +
 			elements[5] * elements[3] * elements[14] +
 			elements[13] * elements[2] * elements[7] -
 			elements[13] * elements[3] * elements[6];
 
-		temp[6] = -elements[0] * elements[6] * elements[15] +
+		newElements[6] = -elements[0] * elements[6] * elements[15] +
 			elements[0] * elements[7] * elements[14] +
 			elements[4] * elements[2] * elements[15] -
 			elements[4] * elements[3] * elements[14] -
 			elements[12] * elements[2] * elements[7] +
 			elements[12] * elements[3] * elements[6];
 
-		temp[10] = elements[0] * elements[5] * elements[15] -
+		newElements[10] = elements[0] * elements[5] * elements[15] -
 			elements[0] * elements[7] * elements[13] -
 			elements[4] * elements[1] * elements[15] +
 			elements[4] * elements[3] * elements[13] +
 			elements[12] * elements[1] * elements[7] -
 			elements[12] * elements[3] * elements[5];
 
-		temp[14] = -elements[0] * elements[5] * elements[14] +
+		newElements[14] = -elements[0] * elements[5] * elements[14] +
 			elements[0] * elements[6] * elements[13] +
 			elements[4] * elements[1] * elements[14] -
 			elements[4] * elements[2] * elements[13] -
 			elements[12] * elements[1] * elements[6] +
 			elements[12] * elements[2] * elements[5];
 
-		temp[3] = -elements[1] * elements[6] * elements[11] +
+		newElements[3] = -elements[1] * elements[6] * elements[11] +
 			elements[1] * elements[7] * elements[10] +
 			elements[5] * elements[2] * elements[11] -
 			elements[5] * elements[3] * elements[10] -
 			elements[9] * elements[2] * elements[7] +
 			elements[9] * elements[3] * elements[6];
 
-		temp[7] = elements[0] * elements[6] * elements[11] -
+		newElements[7] = elements[0] * elements[6] * elements[11] -
 			elements[0] * elements[7] * elements[10] -
 			elements[4] * elements[2] * elements[11] +
 			elements[4] * elements[3] * elements[10] +
 			elements[8] * elements[2] * elements[7] -
 			elements[8] * elements[3] * elements[6];
 
-		temp[11] = -elements[0] * elements[5] * elements[11] +
+		newElements[11] = -elements[0] * elements[5] * elements[11] +
 			elements[0] * elements[7] * elements[9] +
 			elements[4] * elements[1] * elements[11] -
 			elements[4] * elements[3] * elements[9] -
 			elements[8] * elements[1] * elements[7] +
 			elements[8] * elements[3] * elements[5];
 
-		temp[15] = elements[0] * elements[5] * elements[10] -
+		newElements[15] = elements[0] * elements[5] * elements[10] -
 			elements[0] * elements[6] * elements[9] -
 			elements[4] * elements[1] * elements[10] +
 			elements[4] * elements[2] * elements[9] +
 			elements[8] * elements[1] * elements[6] -
 			elements[8] * elements[2] * elements[5];
 
-		float determinant = elements[0] * temp[0] + elements[1] * temp[4] + elements[2] * temp[8] + elements[3] * temp[12];
+		float determinant = elements[0] * newElements[0] + elements[1] * newElements[4] + elements[2] * newElements[8] + elements[3] * newElements[12];
 		determinant = 1.0f / determinant;
 
 		for (int i = 0; i < 4 * 4; i++) {
-			elements[i] = temp[i] * determinant;
+			newElements[i] = newElements[i] * determinant;
 		}
 		
-		return this;
+		return new Mat4(newElements);
 	}
 
-	/*
-	 * Return a new scale matrix with a given scale factor.
-	 */
-
-	public static Mat4 Scale(float scale) {
+	public static Mat4 scale(float scale) {
 		Mat4 result = new Mat4();
 		result.elements[0 + 0 * 4] = scale;
 		result.elements[1 + 1 * 4] = scale;
@@ -278,36 +236,14 @@ public class Mat4 {
 		return result;
 
 	}
-
-	/*
-	 * Return a new translation matrix with a given translation.
-	 */
-
-	public static Mat4 Translation(Vec3 translation) {
+	
+	public static Mat4 translation(Vec3 translation) {
 		Mat4 result = new Mat4();
 		result.elements[0 + 3 * 4] = translation.x;
 		result.elements[1 + 3 * 4] = translation.y;
 		result.elements[2 + 3 * 4] = translation.z;
 		return result;
-
 	}
-	
-	/*
-	 * Return a new translation matrix with a given translation.
-	 */
-
-	public static Mat4 Translation(Vec2 translation) {
-		Mat4 result = new Mat4();
-		result.elements[0 + 3 * 4] = translation.x;
-		result.elements[1 + 3 * 4] = translation.y;
-		result.elements[2 + 3 * 4] = 0.0f;
-		return result;
-
-	}
-
-	/*
-	 * Return a new x-axis rotation matrix with a given angle of rotation.
-	 */
 
 	public static Mat4 xAxisRotation(float angle) {
 		Mat4 result = new Mat4();
@@ -316,12 +252,7 @@ public class Mat4 {
 		result.elements[1 + 2 * 4] = (float) -Math.sin(angle);
 		result.elements[2 + 2 * 4] = (float) Math.cos(angle);
 		return result;
-
 	}
-
-	/*
-	 * Return a new y-axis rotation matrix with a given angle of rotation.
-	 */
 
 	public static Mat4 yAxisRotation(float angle) {
 		Mat4 result = new Mat4();
@@ -330,12 +261,7 @@ public class Mat4 {
 		result.elements[0 + 2 * 4] = (float) -Math.sin(angle);
 		result.elements[2 + 2 * 4] = (float) Math.cos(angle);
 		return result;
-
 	}
-
-	/*
-	 * Return a new z-axis rotation matrix with a given angle of rotation.
-	 */
 
 	public static Mat4 zAxisRotation(float angle) {
 		Mat4 result = new Mat4();
@@ -344,14 +270,9 @@ public class Mat4 {
 		result.elements[0 + 1 * 4] = (float) -Math.sin(angle);
 		result.elements[1 + 1 * 4] = (float) Math.cos(angle);
 		return result;
-
 	}
 
-	/*
-	 * Return a new orthographic projection matrix with given bounds.
-	 */
-
-	public static Mat4 Orthographic(float left, float right, float bottom, float top, float near, float far) {
+	public static Mat4 orthographic(float left, float right, float bottom, float top, float near, float far) {
 		Mat4 result = new Mat4();
 		result.elements[0 + 0 * 4] = 2.0f / (right - left);
 		result.elements[1 + 1 * 4] = 2.0f / (top - bottom);
@@ -362,31 +283,23 @@ public class Mat4 {
 		return result;
 	}
 
-	/*
-	 * Return a string version of the matrix for printing.
-	 */
-
 	public String toString() {
 		DecimalFormat df = new DecimalFormat("0.00");
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		for (int row = 0; row < 4; row++) {
-			result += "(";
+			result.append("(");
 			for (int col = 0; col < 4; col++) {
-				result += df.format(elements[row + col * 4]);
+				result.append(df.format(elements[row + col * 4]));
 				if (col < 3) {
-					result += ", ";
+					result.append(", ");
 				}
 			}
-			result += ")\n";
+			result.append(")\n");
 		}
-		return result;
+		return result.toString();
 	}
-	
-	/*
-	 * Function for converting data into buffer
-	 */
 
-	public void toBuffer(FloatBuffer buffer) {
+	public void getBuffer(FloatBuffer buffer) {
 		buffer.put(elements[0]).put(elements[1]).put(elements[2]).put(elements[3]);
 		buffer.put(elements[4]).put(elements[5]).put(elements[6]).put(elements[7]);
 		buffer.put(elements[8]).put(elements[9]).put(elements[10]).put(elements[11]);
