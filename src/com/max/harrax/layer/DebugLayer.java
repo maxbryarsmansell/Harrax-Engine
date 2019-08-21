@@ -4,8 +4,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
-
-import static org.lwjgl.opengl.GL40.*;
+import org.lwjgl.glfw.GLFW;
 
 import com.max.harrax.events.Event;
 import com.max.harrax.events.EventDispatcher;
@@ -16,12 +15,14 @@ import com.max.harrax.events.MouseMovedEvent;
 import com.max.harrax.graphics.BufferElement;
 import com.max.harrax.graphics.BufferLayout;
 import com.max.harrax.graphics.IndexBuffer;
+import com.max.harrax.graphics.OrthographicCamera;
 import com.max.harrax.graphics.Renderer;
 import com.max.harrax.graphics.Shader;
 import com.max.harrax.graphics.ShaderDataType;
 import com.max.harrax.graphics.VertexArray;
 import com.max.harrax.graphics.VertexBuffer;
 import com.max.harrax.maths.Mat4;
+import com.max.harrax.maths.Vec3;
 
 
 public class DebugLayer extends Layer {
@@ -32,6 +33,9 @@ public class DebugLayer extends Layer {
 	
 	Shader shader;
 
+	OrthographicCamera camera;
+	Vec3 cameraPosition = new Vec3();
+	float cameraRotation = 0.0f;
 	
 	public DebugLayer() {
 		super("Debug");
@@ -48,6 +52,28 @@ public class DebugLayer extends Layer {
 
 	private boolean onKeyboardPress(KeyPressedEvent e) {
 		System.out.println((char)e.getKeyCode() + " pressed");
+		
+		switch (e.getKeyCode()) {
+		case GLFW.GLFW_KEY_W:
+			cameraPosition.y += 0.5f;
+			break;
+		case GLFW.GLFW_KEY_S:
+			cameraPosition.y -= 0.5f;
+			break;
+		case GLFW.GLFW_KEY_A:
+			cameraPosition.x -= 0.5f;
+			break;
+		case GLFW.GLFW_KEY_D:
+			cameraPosition.x += 0.5f;
+			break;
+		case GLFW.GLFW_KEY_E:
+			cameraRotation += 0.1f;
+			break;
+		case GLFW.GLFW_KEY_Q:
+			cameraRotation -= 0.1f;
+			break;
+		}
+		
 		return true;
 	}
 	
@@ -70,10 +96,13 @@ public class DebugLayer extends Layer {
 
 	@Override
 	public void onUpdate(float delta) {
-
-		Renderer.beginScene(Mat4.IDENTITY);
 		
-		Renderer.submit(shader, vArray, Mat4.IDENTITY);
+		camera.setPosition(cameraPosition);
+		camera.setRotation(cameraRotation);
+
+		Renderer.beginScene(camera);
+		
+		Renderer.submit(shader, vArray, Mat4.scale(1f));
 		
 		Renderer.endScene(); 
 	}
@@ -116,8 +145,9 @@ public class DebugLayer extends Layer {
 		iBuffer = new IndexBuffer(ind);
 		vArray.setIndexBuffer(iBuffer);
 		
-		System.out.println("OpenGL version is " +  glGetString(GL_VERSION));
 		shader = new Shader("/shaders/basic.vert", "/shaders/basic.frag");
+		
+		camera = new OrthographicCamera(-1.6f, 1.6f, -0.9f, 0.9f);
 	}
 
 	@Override

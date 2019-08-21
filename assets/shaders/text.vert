@@ -2,7 +2,7 @@
 
 layout(location = 0) in vec2 a_Position;
 layout(location = 1) in vec2 a_Texcoord;
-layout(location = 3) in vec4 a_Colour;
+layout(location = 2) in vec4 a_Colour;
 
 out vec2 v_Texcoord;
 out vec4 v_Colour;
