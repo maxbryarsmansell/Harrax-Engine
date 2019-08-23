@@ -99,13 +99,9 @@ public class Vec2 {
 				.toString();
 	}
 
-	public FloatBuffer getBuffer() {
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(2);
-
+	public void toBuffer(FloatBuffer buffer) {
 		buffer.put(x).put(y);
 		buffer.flip();
-
-		return buffer;
 	}
 
 }

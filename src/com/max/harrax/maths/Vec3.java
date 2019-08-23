@@ -122,13 +122,9 @@ public class Vec3 {
 				.toString();
 	}
 
-	public FloatBuffer getBuffer() {
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(3);
-
+	public void toBuffer(FloatBuffer buffer) {
 		buffer.put(x).put(y).put(z);
 		buffer.flip();
-
-		return buffer;
 	}
 
 }

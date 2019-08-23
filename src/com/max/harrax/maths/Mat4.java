@@ -3,6 +3,8 @@ package com.max.harrax.maths;
 import java.nio.FloatBuffer;
 import java.text.DecimalFormat;
 
+import org.lwjgl.system.MemoryUtil;
+
 public class Mat4 {
 
 	
@@ -282,6 +284,18 @@ public class Mat4 {
 		result.elements[2 + 3 * 4] = -(far + near) / (far - near);
 		return result;
 	}
+	
+	public static Mat4 perspective(float fov, float aspect, float near, float far) {
+		Mat4 result = new Mat4(0.0f);
+		float f = 1f / (float)Math.tan(0.5f * fov);
+		result.elements[0 + 0 * 4] =  f / aspect;
+		result.elements[1 + 1 * 4] =  f;
+		result.elements[2 + 2 * 4] = (near + far) / (near - far);
+		result.elements[2 + 3 * 4] = (2f * near * far) / (near - far);
+		result.elements[3 + 2 * 4] = -1.0f;
+		result.elements[3 + 3 * 4] = 0.0f;
+		return result;
+	}
 
 	public String toString() {
 		DecimalFormat df = new DecimalFormat("0.00");
@@ -299,7 +313,7 @@ public class Mat4 {
 		return result.toString();
 	}
 
-	public void getBuffer(FloatBuffer buffer) {
+	public void toBuffer(FloatBuffer buffer) {
 		buffer.put(elements[0]).put(elements[1]).put(elements[2]).put(elements[3]);
 		buffer.put(elements[4]).put(elements[5]).put(elements[6]).put(elements[7]);
 		buffer.put(elements[8]).put(elements[9]).put(elements[10]).put(elements[11]);

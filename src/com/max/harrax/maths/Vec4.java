@@ -134,13 +134,9 @@ public class Vec4 implements Cloneable {
 				.append(df.format(z)).append(", ").append(df.format(w)).append(")").toString();
 	}
 
-	public FloatBuffer getBuffer() {
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(3);
-
+	public void toBuffer(FloatBuffer buffer) {
 		buffer.put(x).put(y).put(z).put(w);
 		buffer.flip();
-
-		return buffer;
 	}
 
 }
