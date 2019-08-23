@@ -87,7 +87,8 @@ public class Application {
 			window.onUpdate();
 		}
 
-		window.shutdown();
+		layerStack.dispose();
+		window.dispose();
 	}
 
 	public boolean onWindowClose(WindowCloseEvent event) {

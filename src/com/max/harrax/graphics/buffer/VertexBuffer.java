@@ -1,4 +1,4 @@
-package com.max.harrax.graphics;
+package com.max.harrax.graphics.buffer;
 
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -9,7 +9,9 @@ import static org.lwjgl.opengl.GL15.glGenBuffers;
 
 import java.nio.FloatBuffer;
 
-public class VertexBuffer {
+import com.max.harrax.Disposable;
+
+public class VertexBuffer implements Disposable {
 
 	private final int id;
 	private BufferLayout layout;
@@ -38,6 +40,7 @@ public class VertexBuffer {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
+	@Override
 	public void dispose() {
 		glDeleteBuffers(id);
 	}

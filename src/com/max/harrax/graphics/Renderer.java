@@ -8,6 +8,7 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 
+import com.max.harrax.graphics.buffer.VertexArray;
 import com.max.harrax.maths.Mat4;
 
 public class Renderer {

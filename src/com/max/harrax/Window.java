@@ -1,7 +1,6 @@
 package com.max.harrax;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.Functions.*;
 
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
@@ -10,7 +9,7 @@ import org.lwjgl.*;
 import com.max.harrax.events.*;
 import com.max.harrax.utils.Property;
 
-public class Window {
+public class Window implements Disposable{
 
 	private String title;
 	private int width, height;
@@ -92,7 +91,7 @@ public class Window {
 		glfwSwapBuffers(window);
 	}
 
-	public void shutdown() {
+	public void dispose() {
 		glfwDestroyWindow(window);
 		glfwTerminate();
 	}

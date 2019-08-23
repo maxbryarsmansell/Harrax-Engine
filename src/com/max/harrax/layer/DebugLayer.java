@@ -3,7 +3,7 @@ package com.max.harrax.layer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.glfw.GLFW;
 
 import com.max.harrax.events.Event;
@@ -12,15 +12,15 @@ import com.max.harrax.events.KeyPressedEvent;
 import com.max.harrax.events.MouseButtonPressedEvent;
 import com.max.harrax.events.MouseButtonReleasedEvent;
 import com.max.harrax.events.MouseMovedEvent;
-import com.max.harrax.graphics.BufferElement;
-import com.max.harrax.graphics.BufferLayout;
-import com.max.harrax.graphics.IndexBuffer;
 import com.max.harrax.graphics.OrthographicCamera;
 import com.max.harrax.graphics.Renderer;
 import com.max.harrax.graphics.Shader;
-import com.max.harrax.graphics.ShaderDataType;
-import com.max.harrax.graphics.VertexArray;
-import com.max.harrax.graphics.VertexBuffer;
+import com.max.harrax.graphics.buffer.BufferElement;
+import com.max.harrax.graphics.buffer.BufferLayout;
+import com.max.harrax.graphics.buffer.IndexBuffer;
+import com.max.harrax.graphics.buffer.ShaderDataType;
+import com.max.harrax.graphics.buffer.VertexArray;
+import com.max.harrax.graphics.buffer.VertexBuffer;
 import com.max.harrax.maths.Mat4;
 import com.max.harrax.maths.Vec3;
 
@@ -117,7 +117,7 @@ public class DebugLayer extends Layer {
 				 0.0f,  0.5f, 0.0f, 0.8f, 0.2f, 0.2f, 1.0f
 		};
 		
-		FloatBuffer vert = BufferUtils.createFloatBuffer(vertices.length);
+		FloatBuffer vert = MemoryUtil.memAllocFloat(vertices.length);
 		vert.put(vertices);
 		vert.flip();
 		
@@ -125,29 +125,36 @@ public class DebugLayer extends Layer {
 				0, 1, 2
 		};
 		
-		IntBuffer ind = BufferUtils.createIntBuffer(indices.length);
+		IntBuffer ind = MemoryUtil.memAllocInt(indices.length);
 		ind.put(indices);
 		ind.flip();
 		
-		vBuffer = new VertexBuffer(vert);
-	
 		BufferLayout layout = new BufferLayout(
 				new BufferElement(ShaderDataType.Float3, "a_Position"),
 				new BufferElement(ShaderDataType.Float4, "a_Colour")
 				);
 		
-		vBuffer.setLayout(layout);
-		
 		vArray = new VertexArray();
 		
-		vArray.addVertexBuffer(vBuffer);
-		
 		iBuffer = new IndexBuffer(ind);
+		MemoryUtil.memFree(ind);
 		vArray.setIndexBuffer(iBuffer);
 		
-		shader = new Shader("/shaders/basic.vert", "/shaders/basic.frag");
+		vBuffer = new VertexBuffer(vert);
+		vBuffer.setLayout(layout);
+		MemoryUtil.memFree(vert);
+		vArray.addVertexBuffer(vBuffer);
 		
+		shader = new Shader("/shaders/basic.vert", "/shaders/basic.frag");
 		camera = new OrthographicCamera(-1.6f, 1.6f, -0.9f, 0.9f);
+	}
+	
+	@Override
+	public void dispose() {
+		vArray.dispose();
+		vBuffer.dispose();
+		iBuffer.dispose();
+		shader.dispose();
 	}
 
 	@Override

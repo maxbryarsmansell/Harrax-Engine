@@ -1,6 +1,7 @@
 package com.max.harrax.graphics.renderables;
 
 import com.max.harrax.graphics.*;
+import com.max.harrax.graphics.buffer.VertexArray;
 import com.max.harrax.maths.Mat4;
 
 public class Renderable {

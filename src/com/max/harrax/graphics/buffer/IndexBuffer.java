@@ -1,4 +1,4 @@
-package com.max.harrax.graphics;
+package com.max.harrax.graphics.buffer;
 
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -9,7 +9,9 @@ import static org.lwjgl.opengl.GL15.glBufferData;
 
 import java.nio.IntBuffer;
 
-public class IndexBuffer {
+import com.max.harrax.Disposable;
+
+public class IndexBuffer implements Disposable{
 	
 	private final int id;
 	private int count;
@@ -35,6 +37,7 @@ public class IndexBuffer {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
+	@Override
 	public void dispose() {
 		glDeleteBuffers(id);
 	}

@@ -1,5 +1,7 @@
 package com.max.harrax.graphics.text;
 
+import static org.lwjgl.opengl.GL11C.GL_RGBA8;
+
 import java.awt.Canvas;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -147,7 +149,7 @@ public class Font {
 		buffer.flip();
 
 		// Create texture from the byte buffer
-		Texture fontTexture = Texture.createTexture(imageWidth, imageHeight, buffer);
+		Texture fontTexture = new Texture(imageWidth, imageHeight, GL_RGBA8, buffer);
 		MemoryUtil.memFree(buffer);
 		// Return the new texture
 		return fontTexture;

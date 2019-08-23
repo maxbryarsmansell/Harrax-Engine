@@ -3,7 +3,9 @@ package com.max.harrax.layer;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
-public class LayerStack {
+import com.max.harrax.Disposable;
+
+public class LayerStack implements Disposable{
 
 	private ArrayList<Layer> layerStack;
 
@@ -38,7 +40,11 @@ public class LayerStack {
 	public ListIterator<Layer> end(){
 		return layerStack.listIterator(layerInsertIndex);
 	}
-	
-	
 
+	@Override
+	public void dispose() {
+		for (Layer layer : layerStack) {
+			layer.dispose();
+		}
+	}
 }

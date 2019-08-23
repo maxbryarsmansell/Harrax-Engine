@@ -1,4 +1,4 @@
-package com.max.harrax.graphics;
+package com.max.harrax.graphics.buffer;
 
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
@@ -8,7 +8,9 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 import java.util.ArrayList;
 
-public class VertexArray {
+import com.max.harrax.Disposable;
+
+public class VertexArray implements Disposable{
 
 	private final int id;
 	
@@ -68,11 +70,8 @@ public class VertexArray {
 		glBindVertexArray(0);
 	}
 
-
+	@Override
 	public void dispose() {
 		glDeleteVertexArrays(id);
 	}
-
-
-
 }

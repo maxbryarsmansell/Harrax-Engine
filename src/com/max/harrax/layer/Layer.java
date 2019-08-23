@@ -1,8 +1,9 @@
 package com.max.harrax.layer;
 
+import com.max.harrax.Disposable;
 import com.max.harrax.events.EventListener;
 
-public abstract class Layer implements EventListener{
+public abstract class Layer implements EventListener, Disposable{
 	
 	protected String name;
 	protected boolean isVisible;

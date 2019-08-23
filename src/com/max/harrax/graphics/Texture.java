@@ -1,151 +1,67 @@
 package com.max.harrax.graphics;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_NEAREST;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_RGBA8;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glDeleteTextures;
+import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glTexImage2D;
+import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
 
 import java.nio.ByteBuffer;
 
 import org.lwjgl.BufferUtils;
 
-public class Texture {
+import com.max.harrax.Disposable;
+
+public class Texture implements Disposable{
 	
-	/*
-	 * Store the handle for the texture
-	 */
 	private final int id;
-	
-	/*
-	 * Texture width and height attributes
-	 */
 	
 	private int width, height;
 	
-	/*
-	 * Texture object constructor
-	 */
-	
-	public Texture() {
-		// Generate a new OpenGL texture handle
+	public Texture(int width, int height, int internalFormat, ByteBuffer buffer) {
 		id = glGenTextures();
+		
+        this.width = width;
+        this.height = height;
+        
+        glBindTexture(GL_TEXTURE_2D, id);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 	}
-	
-	/*
-     * Binds the texture.
-     */
-	
+
     public void bind() {
         glBindTexture(GL_TEXTURE_2D, id);
     }
-    
-    /*
-     * Set given parameters of the texture
-     */
-    
-    public void setParameter(int name, int value) {
-    	glTexParameteri(GL_TEXTURE_2D, name, value);
+
+    public void unbind() {
+    	glBindTexture(GL_TEXTURE_2D, 0);
     }
     
-    /*
-     * Delete the texture.
-     */
-    
+    @Override
     public void dispose() {
         glDeleteTextures(id);
     }
-    
-    /*
-     * Gets the texture width
-     */
     
     public int getWidth() {
         return width;
     }
 
-    /*
-     * Sets the texture width
-     */
-    
-    public void setWidth(int width) {
-        if (width > 0) {
-            this.width = width;
-        }
-    }
-
-    /*
-     * Gets the texture height
-     */
-    
     public int getHeight() {
         return height;
-    }
-
-    /*
-     * Sets the texture height
-     */
-    
-    public void setHeight(int height) {
-        if (height > 0) {
-            this.height = height;
-        }
-    }
-    
-    public int getID() {
-    	return id;
-    }
-
-    /*
-     * Uploads image data to OpenGL
-     */
-    public void uploadData(int internalFormat, int width, int height, int format, ByteBuffer data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-    }
-    
-    /*
-     * Create an empty texture
-     */
-    
-    public static Texture createEmptyTexture() {
-        Texture texture = new Texture();
-        texture.setWidth(1);
-        texture.setHeight(1);
-        
-        ByteBuffer data = BufferUtils.createByteBuffer(4);
-        data.put((byte) -1).put((byte) -1).put((byte) -1).put((byte) -1);
-        data.flip();
-
-        texture.bind();
-        
-        texture.setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        texture.setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-        texture.setParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        texture.setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-        texture.uploadData(GL_RGBA8, 1, 1, GL_RGBA, data);
-
-        return texture;
-    }
-    
-
-
-    /*
-     * Create a texture from given data
-     */
-    
-    public static Texture createTexture(int width, int height, ByteBuffer data) {
-        Texture texture = new Texture();
-        texture.setWidth(width);
-        texture.setHeight(height);
-        
-        texture.bind();
-        
-        texture.setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        texture.setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-        texture.setParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        texture.setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-        texture.uploadData(GL_RGBA8, width, height, GL_RGBA, data);
-
-        return texture;
     }
 	
 }

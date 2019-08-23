@@ -1,4 +1,4 @@
-package com.max.harrax.graphics;
+package com.max.harrax.graphics.buffer;
 
 import static org.lwjgl.opengl.GL40.*;
 
