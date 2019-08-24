@@ -90,14 +90,14 @@ public class DebugLayer extends Layer {
 	@Override
 	public void onUpdate(float delta) {
 		
-		//camera.setPosition(cameraPosition);
+		camera.setPosition(cameraPosition);
 		//camera.setRotation(cameraRotation);
 
 		GL40.glEnable(GL_DEPTH_TEST);
 		
 		Renderer.beginScene(camera);
 		
-		Renderer.submit(shader, Material.DEBUG_MATERIAL, quadMesh, Mat4.yAxisRotation(0.2f).mult(Mat4.xAxisRotation(0.2f)).mult(Mat4.translation(cameraPosition)));
+		Renderer.submit(shader, Material.DEBUG_MATERIAL, quadMesh, Mat4.yAxisRotation(0.2f).mult(Mat4.xAxisRotation(0.2f)));
 		
 		Renderer.endScene(); 
 	}

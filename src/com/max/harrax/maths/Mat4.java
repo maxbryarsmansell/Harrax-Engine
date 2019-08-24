@@ -231,7 +231,7 @@ public class Mat4 {
 	}
 
 	public static Mat4 scale(float scale) {
-		Mat4 result = new Mat4();
+		Mat4 result = new Mat4(1.0f);
 		result.elements[0 + 0 * 4] = scale;
 		result.elements[1 + 1 * 4] = scale;
 		result.elements[2 + 2 * 4] = scale;
@@ -240,7 +240,7 @@ public class Mat4 {
 	}
 	
 	public static Mat4 translation(Vec3 translation) {
-		Mat4 result = new Mat4();
+		Mat4 result = new Mat4(1.0f);
 		result.elements[0 + 3 * 4] = translation.x;
 		result.elements[1 + 3 * 4] = translation.y;
 		result.elements[2 + 3 * 4] = translation.z;
@@ -248,7 +248,7 @@ public class Mat4 {
 	}
 
 	public static Mat4 xAxisRotation(float angle) {
-		Mat4 result = new Mat4();
+		Mat4 result = new Mat4(1.0f);
 		result.elements[1 + 1 * 4] = (float) Math.cos(angle);
 		result.elements[2 + 1 * 4] = (float) Math.sin(angle);
 		result.elements[1 + 2 * 4] = (float) -Math.sin(angle);
@@ -257,7 +257,7 @@ public class Mat4 {
 	}
 
 	public static Mat4 yAxisRotation(float angle) {
-		Mat4 result = new Mat4();
+		Mat4 result = new Mat4(1.0f);
 		result.elements[0 + 0 * 4] = (float) Math.cos(angle);
 		result.elements[2 + 0 * 4] = (float) Math.sin(angle);
 		result.elements[0 + 2 * 4] = (float) -Math.sin(angle);
@@ -266,7 +266,7 @@ public class Mat4 {
 	}
 
 	public static Mat4 zAxisRotation(float angle) {
-		Mat4 result = new Mat4();
+		Mat4 result = new Mat4(1.0f);
 		result.elements[0 + 0 * 4] = (float) Math.cos(angle);
 		result.elements[1 + 0 * 4] = (float) Math.sin(angle);
 		result.elements[0 + 1 * 4] = (float) -Math.sin(angle);
@@ -275,7 +275,7 @@ public class Mat4 {
 	}
 
 	public static Mat4 orthographic(float left, float right, float bottom, float top, float near, float far) {
-		Mat4 result = new Mat4();
+		Mat4 result = new Mat4(1.0f);
 		result.elements[0 + 0 * 4] = 2.0f / (right - left);
 		result.elements[1 + 1 * 4] = 2.0f / (top - bottom);
 		result.elements[2 + 2 * 4] = -2.0f / (far - near);
