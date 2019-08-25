@@ -2,6 +2,7 @@
  
  <properties>
     <entry key="title">Harrax</entry>
-    <entry key="width">800</entry>
-    <entry key="height">600</entry>
+    <entry key="width">1280</entry>
+    <entry key="height">720</entry>
+     <entry key="vsync">false</entry>
 </properties>

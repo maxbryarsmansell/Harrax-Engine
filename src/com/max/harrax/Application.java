@@ -10,6 +10,7 @@ import com.max.harrax.graphics.Renderer;
 import com.max.harrax.layer.DebugLayer;
 import com.max.harrax.layer.Layer;
 import com.max.harrax.layer.LayerStack;
+import com.max.harrax.utils.Property;
 import com.max.harrax.utils.Timer;
 
 public class Application {
@@ -24,14 +25,16 @@ public class Application {
 
 	// Constructor
 	public Application() {
-
 		assert (appInstance != null) : "There should only be one instance of application.";
-
 		appInstance = this;
+		
 
-		timer = new Timer();
+
 		window = new Window();
-		window.setVsync(true);
+		
+		Renderer.init();
+		
+		timer = new Timer();
 		layerStack = new LayerStack();
 
 		pushLayer(new DebugLayer());
@@ -94,5 +97,13 @@ public class Application {
 	public boolean onWindowClose(WindowCloseEvent event) {
 		running = false;
 		return true;
+	}
+	
+	public double totalTime() {
+		return timer.getTime();
+	}
+
+	public Window getWindow() {
+		return window;
 	}
 }

@@ -15,9 +15,11 @@ public abstract class Camera {
 		this.position = new Vec3();
 		this.projectionMatrix = projectionMatrix;
 		this.viewMatrix = viewMatrix;
+		init();
 		recalculateViewProjectionMatrix();
 	}
 	
+	protected abstract void init();
 	protected abstract void recalculateViewProjectionMatrix();
 
 	public Vec3 getPosition() {

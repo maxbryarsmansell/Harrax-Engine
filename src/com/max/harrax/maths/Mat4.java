@@ -24,6 +24,13 @@ public class Mat4 {
 		this.elements[3 + 3 * 4] = diagonal;
 	}
 	
+	public Mat4(Vec4 col1, Vec4 col2, Vec4 col3, Vec4 col4) {
+		this.elements[0] = col1.x; this.elements[4] = col2.x; this.elements[8] = col3.x; this.elements[12] = col4.x;
+		this.elements[1] = col1.y; this.elements[5] = col2.y; this.elements[9] = col3.y; this.elements[13] = col4.y;
+		this.elements[2] = col1.z; this.elements[6] = col2.z; this.elements[10] = col3.z; this.elements[14] = col4.z;
+		this.elements[3] = col1.w; this.elements[7] = col2.w; this.elements[11] = col3.w; this.elements[15] = col4.w;
+	}
+	
 	public Mat4() {
 		this(1.0f);
 	}
@@ -59,10 +66,6 @@ public class Mat4 {
 		}
 		return new Mat4(newElements);
 	}
-	
-	public Vec4 mult(final Vec4 other) {
-		return other.mult(this);
-	}
 
 	public Mat4 add(final Mat4 other) {
 		float[] newElements = new float[16];
@@ -72,7 +75,6 @@ public class Mat4 {
 		return new Mat4(newElements);
 	}
 
-
 	public Mat4 sub(final Mat4 other) {
 		float[] newElements = new float[16];
 		for (int i = 0; i < this.elements.length; i++) {
@@ -80,16 +82,20 @@ public class Mat4 {
 		}
 		return new Mat4(newElements);
 	}
+	
+	public Vec4 mult(final Vec4 other) {
+		return other.mult(this);
+	}
 
-	public Mat4 mult(final Mat4 other) {
+	public Mat4 mult(final Mat4 right) {
 		float[] newElements = new float[16];
 		for (int row = 0; row < 4; row++) {
 			for (int col = 0; col < 4; col++) {
 				float sum = 0.0f;
 				for (int e = 0; e < 4; e++) {
-					sum += elements[e + row * 4] * other.elements[col + e * 4];
+					sum += elements[row + e * 4] * right.elements[e + col * 4];
 				}
-				newElements[col + row * 4] = sum;
+				newElements[row + col * 4] = sum;
 			}
 		}
 		return new Mat4(newElements);
@@ -106,128 +112,126 @@ public class Mat4 {
 	}
 	
 	public Mat4 inverse() {
-		float[] newElements = new float[16];
+		float[] inv = new float[16];
 
-		newElements[0] = elements[5] * elements[10] * elements[15] -
-			elements[5] * elements[11] * elements[14] -
-			elements[9] * elements[6] * elements[15] +
-			elements[9] * elements[7] * elements[14] +
-			elements[13] * elements[6] * elements[11] -
-			elements[13] * elements[7] * elements[10];
+	    inv[0] = this.elements[5]  * this.elements[10] * this.elements[15] - 
+	             this.elements[5]  * this.elements[11] * this.elements[14] - 
+	             this.elements[9]  * this.elements[6]  * this.elements[15] + 
+	             this.elements[9]  * this.elements[7]  * this.elements[14] +
+	             this.elements[13] * this.elements[6]  * this.elements[11] - 
+	             this.elements[13] * this.elements[7]  * this.elements[10];
 
-		newElements[4] = -elements[4] * elements[10] * elements[15] +
-			elements[4] * elements[11] * elements[14] +
-			elements[8] * elements[6] * elements[15] -
-			elements[8] * elements[7] * elements[14] -
-			elements[12] * elements[6] * elements[11] +
-			elements[12] * elements[7] * elements[10];
+	    inv[4] = -this.elements[4]  * this.elements[10] * this.elements[15] + 
+	              this.elements[4]  * this.elements[11] * this.elements[14] + 
+	              this.elements[8]  * this.elements[6]  * this.elements[15] - 
+	              this.elements[8]  * this.elements[7]  * this.elements[14] - 
+	              this.elements[12] * this.elements[6]  * this.elements[11] + 
+	              this.elements[12] * this.elements[7]  * this.elements[10];
 
-		newElements[8] = elements[4] * elements[9] * elements[15] -
-			elements[4] * elements[11] * elements[13] -
-			elements[8] * elements[5] * elements[15] +
-			elements[8] * elements[7] * elements[13] +
-			elements[12] * elements[5] * elements[11] -
-			elements[12] * elements[7] * elements[9];
+	    inv[8] = this.elements[4]  * this.elements[9] * this.elements[15] - 
+	             this.elements[4]  * this.elements[11] * this.elements[13] - 
+	             this.elements[8]  * this.elements[5] * this.elements[15] + 
+	             this.elements[8]  * this.elements[7] * this.elements[13] + 
+	             this.elements[12] * this.elements[5] * this.elements[11] - 
+	             this.elements[12] * this.elements[7] * this.elements[9];
 
-		newElements[12] = -elements[4] * elements[9] * elements[14] +
-			elements[4] * elements[10] * elements[13] +
-			elements[8] * elements[5] * elements[14] -
-			elements[8] * elements[6] * elements[13] -
-			elements[12] * elements[5] * elements[10] +
-			elements[12] * elements[6] * elements[9];
+	    inv[12] = -this.elements[4]  * this.elements[9] * this.elements[14] + 
+	               this.elements[4]  * this.elements[10] * this.elements[13] +
+	               this.elements[8]  * this.elements[5] * this.elements[14] - 
+	               this.elements[8]  * this.elements[6] * this.elements[13] - 
+	               this.elements[12] * this.elements[5] * this.elements[10] + 
+	               this.elements[12] * this.elements[6] * this.elements[9];
 
-		newElements[1] = -elements[1] * elements[10] * elements[15] +
-			elements[1] * elements[11] * elements[14] +
-			elements[9] * elements[2] * elements[15] -
-			elements[9] * elements[3] * elements[14] -
-			elements[13] * elements[2] * elements[11] +
-			elements[13] * elements[3] * elements[10];
+	    inv[1] = -this.elements[1]  * this.elements[10] * this.elements[15] + 
+	              this.elements[1]  * this.elements[11] * this.elements[14] + 
+	              this.elements[9]  * this.elements[2] * this.elements[15] - 
+	              this.elements[9]  * this.elements[3] * this.elements[14] - 
+	              this.elements[13] * this.elements[2] * this.elements[11] + 
+	              this.elements[13] * this.elements[3] * this.elements[10];
 
-		newElements[5] = elements[0] * elements[10] * elements[15] -
-			elements[0] * elements[11] * elements[14] -
-			elements[8] * elements[2] * elements[15] +
-			elements[8] * elements[3] * elements[14] +
-			elements[12] * elements[2] * elements[11] -
-			elements[12] * elements[3] * elements[10];
+	    inv[5] = this.elements[0]  * this.elements[10] * this.elements[15] - 
+	             this.elements[0]  * this.elements[11] * this.elements[14] - 
+	             this.elements[8]  * this.elements[2] * this.elements[15] + 
+	             this.elements[8]  * this.elements[3] * this.elements[14] + 
+	             this.elements[12] * this.elements[2] * this.elements[11] - 
+	             this.elements[12] * this.elements[3] * this.elements[10];
 
-		newElements[9] = -elements[0] * elements[9] * elements[15] +
-			elements[0] * elements[11] * elements[13] +
-			elements[8] * elements[1] * elements[15] -
-			elements[8] * elements[3] * elements[13] -
-			elements[12] * elements[1] * elements[11] +
-			elements[12] * elements[3] * elements[9];
+	    inv[9] = -this.elements[0]  * this.elements[9] * this.elements[15] + 
+	              this.elements[0]  * this.elements[11] * this.elements[13] + 
+	              this.elements[8]  * this.elements[1] * this.elements[15] - 
+	              this.elements[8]  * this.elements[3] * this.elements[13] - 
+	              this.elements[12] * this.elements[1] * this.elements[11] + 
+	              this.elements[12] * this.elements[3] * this.elements[9];
 
-		newElements[13] = elements[0] * elements[9] * elements[14] -
-			elements[0] * elements[10] * elements[13] -
-			elements[8] * elements[1] * elements[14] +
-			elements[8] * elements[2] * elements[13] +
-			elements[12] * elements[1] * elements[10] -
-			elements[12] * elements[2] * elements[9];
+	    inv[13] = this.elements[0]  * this.elements[9] * this.elements[14] - 
+	              this.elements[0]  * this.elements[10] * this.elements[13] - 
+	              this.elements[8]  * this.elements[1] * this.elements[14] + 
+	              this.elements[8]  * this.elements[2] * this.elements[13] + 
+	              this.elements[12] * this.elements[1] * this.elements[10] - 
+	              this.elements[12] * this.elements[2] * this.elements[9];
 
-		newElements[2] = elements[1] * elements[6] * elements[15] -
-			elements[1] * elements[7] * elements[14] -
-			elements[5] * elements[2] * elements[15] +
-			elements[5] * elements[3] * elements[14] +
-			elements[13] * elements[2] * elements[7] -
-			elements[13] * elements[3] * elements[6];
+	    inv[2] = this.elements[1]  * this.elements[6] * this.elements[15] - 
+	             this.elements[1]  * this.elements[7] * this.elements[14] - 
+	             this.elements[5]  * this.elements[2] * this.elements[15] + 
+	             this.elements[5]  * this.elements[3] * this.elements[14] + 
+	             this.elements[13] * this.elements[2] * this.elements[7] - 
+	             this.elements[13] * this.elements[3] * this.elements[6];
 
-		newElements[6] = -elements[0] * elements[6] * elements[15] +
-			elements[0] * elements[7] * elements[14] +
-			elements[4] * elements[2] * elements[15] -
-			elements[4] * elements[3] * elements[14] -
-			elements[12] * elements[2] * elements[7] +
-			elements[12] * elements[3] * elements[6];
+	    inv[6] = -this.elements[0]  * this.elements[6] * this.elements[15] + 
+	              this.elements[0]  * this.elements[7] * this.elements[14] + 
+	              this.elements[4]  * this.elements[2] * this.elements[15] - 
+	              this.elements[4]  * this.elements[3] * this.elements[14] - 
+	              this.elements[12] * this.elements[2] * this.elements[7] + 
+	              this.elements[12] * this.elements[3] * this.elements[6];
 
-		newElements[10] = elements[0] * elements[5] * elements[15] -
-			elements[0] * elements[7] * elements[13] -
-			elements[4] * elements[1] * elements[15] +
-			elements[4] * elements[3] * elements[13] +
-			elements[12] * elements[1] * elements[7] -
-			elements[12] * elements[3] * elements[5];
+	    inv[10] = this.elements[0]  * this.elements[5] * this.elements[15] - 
+	              this.elements[0]  * this.elements[7] * this.elements[13] - 
+	              this.elements[4]  * this.elements[1] * this.elements[15] + 
+	              this.elements[4]  * this.elements[3] * this.elements[13] + 
+	              this.elements[12] * this.elements[1] * this.elements[7] - 
+	              this.elements[12] * this.elements[3] * this.elements[5];
 
-		newElements[14] = -elements[0] * elements[5] * elements[14] +
-			elements[0] * elements[6] * elements[13] +
-			elements[4] * elements[1] * elements[14] -
-			elements[4] * elements[2] * elements[13] -
-			elements[12] * elements[1] * elements[6] +
-			elements[12] * elements[2] * elements[5];
+	    inv[14] = -this.elements[0]  * this.elements[5] * this.elements[14] + 
+	               this.elements[0]  * this.elements[6] * this.elements[13] + 
+	               this.elements[4]  * this.elements[1] * this.elements[14] - 
+	               this.elements[4]  * this.elements[2] * this.elements[13] - 
+	               this.elements[12] * this.elements[1] * this.elements[6] + 
+	               this.elements[12] * this.elements[2] * this.elements[5];
 
-		newElements[3] = -elements[1] * elements[6] * elements[11] +
-			elements[1] * elements[7] * elements[10] +
-			elements[5] * elements[2] * elements[11] -
-			elements[5] * elements[3] * elements[10] -
-			elements[9] * elements[2] * elements[7] +
-			elements[9] * elements[3] * elements[6];
+	    inv[3] = -this.elements[1] * this.elements[6] * this.elements[11] + 
+	              this.elements[1] * this.elements[7] * this.elements[10] + 
+	              this.elements[5] * this.elements[2] * this.elements[11] - 
+	              this.elements[5] * this.elements[3] * this.elements[10] - 
+	              this.elements[9] * this.elements[2] * this.elements[7] + 
+	              this.elements[9] * this.elements[3] * this.elements[6];
 
-		newElements[7] = elements[0] * elements[6] * elements[11] -
-			elements[0] * elements[7] * elements[10] -
-			elements[4] * elements[2] * elements[11] +
-			elements[4] * elements[3] * elements[10] +
-			elements[8] * elements[2] * elements[7] -
-			elements[8] * elements[3] * elements[6];
+	    inv[7] = this.elements[0] * this.elements[6] * this.elements[11] - 
+	             this.elements[0] * this.elements[7] * this.elements[10] - 
+	             this.elements[4] * this.elements[2] * this.elements[11] + 
+	             this.elements[4] * this.elements[3] * this.elements[10] + 
+	             this.elements[8] * this.elements[2] * this.elements[7] - 
+	             this.elements[8] * this.elements[3] * this.elements[6];
 
-		newElements[11] = -elements[0] * elements[5] * elements[11] +
-			elements[0] * elements[7] * elements[9] +
-			elements[4] * elements[1] * elements[11] -
-			elements[4] * elements[3] * elements[9] -
-			elements[8] * elements[1] * elements[7] +
-			elements[8] * elements[3] * elements[5];
+	    inv[11] = -this.elements[0] * this.elements[5] * this.elements[11] + 
+	               this.elements[0] * this.elements[7] * this.elements[9] + 
+	               this.elements[4] * this.elements[1] * this.elements[11] - 
+	               this.elements[4] * this.elements[3] * this.elements[9] - 
+	               this.elements[8] * this.elements[1] * this.elements[7] + 
+	               this.elements[8] * this.elements[3] * this.elements[5];
 
-		newElements[15] = elements[0] * elements[5] * elements[10] -
-			elements[0] * elements[6] * elements[9] -
-			elements[4] * elements[1] * elements[10] +
-			elements[4] * elements[2] * elements[9] +
-			elements[8] * elements[1] * elements[6] -
-			elements[8] * elements[2] * elements[5];
+	    inv[15] = this.elements[0] * this.elements[5] * this.elements[10] - 
+	              this.elements[0] * this.elements[6] * this.elements[9] - 
+	              this.elements[4] * this.elements[1] * this.elements[10] + 
+	              this.elements[4] * this.elements[2] * this.elements[9] + 
+	              this.elements[8] * this.elements[1] * this.elements[6] - 
+	              this.elements[8] * this.elements[2] * this.elements[5];
 
-		float determinant = elements[0] * newElements[0] + elements[1] * newElements[4] + elements[2] * newElements[8] + elements[3] * newElements[12];
-		determinant = 1.0f / determinant;
+	    float deterinant = this.elements[0] * inv[0] + this.elements[1] * inv[4] + this.elements[2] * inv[8] + this.elements[3] * inv[12];
 
-		for (int i = 0; i < 4 * 4; i++) {
-			newElements[i] = newElements[i] * determinant;
-		}
+	    for (int i = 0; i < 16; i++)
+	    	inv[i] = inv[i] * (1f / deterinant);
 		
-		return new Mat4(newElements);
+		return new Mat4(inv);
 	}
 
 	public static Mat4 scale(float scale) {
@@ -294,6 +298,31 @@ public class Mat4 {
 		result.elements[2 + 3 * 4] = (2f * near * far) / (near - far);
 		result.elements[3 + 2 * 4] = -1.0f;
 		result.elements[3 + 3 * 4] = 0.0f;
+		return result;
+	}
+	
+	public static Mat4 lookAt(Vec3 from, Vec3 to, Vec3 wrldUp) {
+		Vec3 zaxis = (from.sub(to)).norm();
+		Vec3 xaxis = (wrldUp.cross(zaxis)).norm();
+		Vec3 yaxis = (zaxis.cross(xaxis)).norm();
+		
+		Mat4 result = new Mat4(1.0f);
+		result.elements[0 + 0 * 4] = xaxis.x;
+		result.elements[1 + 0 * 4] = yaxis.x;
+		result.elements[2 + 0 * 4] = zaxis.x;
+		
+		result.elements[0 + 1 * 4] = xaxis.y;
+		result.elements[1 + 1 * 4] = yaxis.y;
+		result.elements[2 + 1 * 4] = zaxis.y;
+		
+		result.elements[0 + 2 * 4] = xaxis.z;
+		result.elements[1 + 2 * 4] = yaxis.z;
+		result.elements[2 + 2 * 4] = zaxis.z;
+		
+		result.elements[0 + 3 * 4] = -(xaxis.dot(from));
+		result.elements[1 + 3 * 4] = -(yaxis.dot(from));
+		result.elements[2 + 3 * 4] = -(zaxis.dot(from));
+		
 		return result;
 	}
 

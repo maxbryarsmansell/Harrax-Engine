@@ -13,6 +13,7 @@ public class Window implements Disposable{
 
 	private String title;
 	private int width, height;
+	private boolean vSync;
 
 	private final long window;
 
@@ -30,6 +31,7 @@ public class Window implements Disposable{
 		this.title = Property.loadProperty("title", "window");
 		this.width = Integer.parseInt(Property.loadProperty("width", "window"));
 		this.height = Integer.parseInt(Property.loadProperty("height", "window"));
+		this.vSync = Boolean.parseBoolean(Property.loadProperty("vsync", "window"));
 
 		if (!glfwInit())
 			throw new IllegalStateException("Unable to initialize GLFW!");
@@ -40,12 +42,9 @@ public class Window implements Disposable{
 		window = glfwCreateWindow(width, height, title, 0, 0);
 
 		glfwMakeContextCurrent(window);
-
-		glfwShowWindow(window);
-		
 		GL.createCapabilities();
 		
-		setVsync(false);
+		setVsync(vSync);
 
 		glfwSetWindowCloseCallback(window, windowCloseCallback = GLFWWindowCloseCallback.create((window) -> {
 			Event event = new WindowCloseEvent();
@@ -106,6 +105,10 @@ public class Window implements Disposable{
 
 	public int getHeight() {
 		return height;
+	}
+	
+	public long getNativeWindow() {
+		return window;
 	}
 
 }

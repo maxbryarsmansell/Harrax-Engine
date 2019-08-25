@@ -8,6 +8,8 @@ import org.lwjgl.BufferUtils;
 public class Vec3 {
 	
 	//private static final float EPSILON = 0.000001f;
+	
+	public static final Vec3 ZERO = new Vec3();
 
 	/*
 	 * x, y and z components, represented as floats.
@@ -39,6 +41,18 @@ public class Vec3 {
 	public Vec3 add(final Vec3 other) {
 		return new Vec3(x + other.x, y + other.y, z + other.z);
 	}
+	
+	public void addEquals(final Vec3 other) {
+		x += other.x;
+		y += other.y;
+		z += other.z;
+	}
+	
+	public void subEquals(final Vec3 other) {
+		x -= other.x;
+		y -= other.y;
+		z -= other.z;
+	}
 
 	public Vec3 sub(final Vec3 other) {
 		return new Vec3(x - other.x, y - other.y, z - other.z);
@@ -58,7 +72,7 @@ public class Vec3 {
 
 	public Vec3 cross(final Vec3 other) {
 		return new Vec3(y * other.z - z * other.y,
-						z * other.x - z * other.z,
+						z * other.x - x * other.z,
 						x * other.y - y * other.x);
 	}
 	
@@ -85,10 +99,8 @@ public class Vec3 {
 		return new Vec3(x / length, y / length, z / length);
 	}
 
-	public void negate() {
-		x = -x;
-		y = -y;
-		z = -z;
+	public Vec3 negate() {
+		return new Vec3(-x, -y, -z);
 	}
 	
 	public Vec4 toVec4() {

@@ -14,11 +14,9 @@ public class Timer {
         lastLoopTime = getTime();
     }
 
-    
-    private double getTime() {
+    public double getTime() {
         return glfwGetTime();
     }
-
 
     public float getDelta() {
         double time = getTime();

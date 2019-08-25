@@ -50,7 +50,7 @@ public class VertexArray implements Disposable{
 		
 		vertexBuffers.add(vertexBuffer);
 	}
-	
+
 	public void setIndexBuffer(IndexBuffer indexBuffer) {
 		glBindVertexArray(id);
 		indexBuffer.bind();
