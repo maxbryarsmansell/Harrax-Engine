@@ -1,0 +1,50 @@
+package com.max.harrax.layer;
+
+import java.util.ArrayList;
+import java.util.ListIterator;
+
+import com.max.harrax.Disposable;
+
+public class LayerStack implements Disposable{
+
+	private ArrayList<Layer> layerStack;
+
+	private int layerInsertIndex;
+
+	public LayerStack() {
+		this.layerStack = new ArrayList<Layer>();
+		this.layerInsertIndex = 0;
+	}
+
+	public void pushLayer(Layer layer) {
+		this.layerStack.add(layerInsertIndex, layer);
+		layerInsertIndex++;
+		layer.onAttach();
+	}
+
+	public void popLayer(Layer layer) {
+		
+		int layerIndex = layerStack.indexOf(layer);
+		
+		if (layerIndex != -1) {
+			layer.onDetach();
+			this.layerStack.remove(layer);
+			layerInsertIndex--;
+		}
+	}
+	
+	public ListIterator<Layer> start(){
+		return layerStack.listIterator();
+	}
+	
+	public ListIterator<Layer> end(){
+		return layerStack.listIterator(layerInsertIndex);
+	}
+
+	@Override
+	public void dispose() {
+		for (Layer layer : layerStack) {
+			layer.dispose();
+		}
+	}
+}
