@@ -1,8 +1,0 @@
- <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
- 
- <properties>
-    <entry key="title">Harrax</entry>
-    <entry key="width">1280</entry>
-    <entry key="height">720</entry>
-     <entry key="vsync">false</entry>
-</properties>
