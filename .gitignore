@@ -33,5 +33,4 @@ proguard/
 .gradle/
 build/
 bin/
-gradle/
 .settings/org.eclipse.buildship.core.prefs
