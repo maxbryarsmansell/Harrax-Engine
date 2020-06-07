@@ -7,11 +7,11 @@ import java.util.Random;
 
 public class Colour {
 
-    public static Colour BLACK = new Colour(0, 0, 0, 255);
-    public static Colour WHITE = new Colour(255, 255, 255, 255);
-    public static Colour RED = new Colour(255, 0, 0, 255);
-    public static Colour GREEN = new Colour(0, 255, 0, 255);
-    public static Colour BLUE = new Colour(0, 0, 255, 255);
+    public static Colour BLACK = new Colour(0, 0, 0, 1);
+    public static Colour WHITE = new Colour(1, 1, 1, 1);
+    public static Colour RED = new Colour(1, 0, 0, 1);
+    public static Colour GREEN = new Colour(0, 1, 0, 1);
+    public static Colour BLUE = new Colour(0, 0, 1, 1);
     public static Colour TRANSPARENT = new Colour(0, 0, 0, 0);
 
     public final float r, g, b, a;
@@ -26,11 +26,11 @@ public class Colour {
     }
 
     public Colour(int red, int green, int blue) {
-        this(red, green, blue, 255);
+        this(red, green, blue, 1);
     }
 
     public Colour() {
-        this(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), 255);
+        this(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 1);
     }
 
     public Vec3 toVec3() {
@@ -40,5 +40,4 @@ public class Colour {
     public Vec4 toVec4() {
         return new Vec4(r, g, b, a);
     }
-
 }

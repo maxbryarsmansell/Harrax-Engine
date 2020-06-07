@@ -1,17 +1,18 @@
 package asteroids.harrax;
 
-import asteroids.Asteroids;
-import asteroids.Vector;
-import asteroids.Views;
+import asteroids.*;
 import com.max.harrax.Application;
 import com.max.harrax.events.*;
 import com.max.harrax.events.Event;
 import com.max.harrax.graphics.Colour;
+import com.max.harrax.graphics.Light;
 import com.max.harrax.layer.Layer;
 import com.max.harrax.maths.Vec2;
 import com.max.harrax.maths.Vec3;
 import com.max.harrax.maths.Vec4;
 import org.lwjgl.glfw.GLFW;
+import org.magnos.entity.Entity;
+import org.magnos.entity.EntityIterator;
 import org.magnos.entity.Ents;
 
 import javax.swing.*;
@@ -117,7 +118,16 @@ public class HarraxAsteroids extends Layer
 
 		a.update(delta);
 
-		renderer.beginScene(camera);
+		ArrayList<Light> lights = new ArrayList<>();
+
+		lights.add(new Light(new Vec3(640, 360, 150f), new Colour(0.8f, 0.2f, 0.6f, 1.0f)));
+
+		for (Entity a : a.iterator.iterate( a.entities, Filtering.LASERS )) {
+			if (!a.isExpired())
+				lights.add(new Light(new Vec3(a.get(Components.POSITION).x, a.get(Components.POSITION).y, 20), Colour.RED));
+		}
+
+		renderer.beginScene(camera, lights.toArray(new Light[lights.size()]));
 		renderer.submitQuad(0,0, 1280, 720, new Colour(0.5f, 0.5f, 0.5f, 0.2f));
 		a.draw(renderer);
 		renderer.endScene();

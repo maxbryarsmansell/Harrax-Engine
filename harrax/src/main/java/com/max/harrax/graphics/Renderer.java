@@ -6,9 +6,11 @@ import com.max.harrax.graphics.buffer.VertexArray;
 import com.max.harrax.graphics.buffer.VertexBuffer;
 import com.max.harrax.maths.Mat4;
 import com.max.harrax.maths.Vec2;
+import com.max.harrax.maths.Vec3;
 import com.max.harrax.maths.Vec4;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.max.harrax.graphics.buffer.ShaderDataType.*;
@@ -43,13 +45,11 @@ public class Renderer {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        glLineWidth(3.0f);
-
         rendererSubmissions = 0;
         redererDrawCalls = 0;
 
         // Triangle Renderer
-        BufferLayout triangleBufferLayout = new BufferLayout(new BufferElement(Float2, "a_Position"),  new BufferElement(Float4, "a_Colour"));
+        BufferLayout triangleBufferLayout = new BufferLayout(new BufferElement(Float2, "a_Position"), new BufferElement(Float4, "a_Colour"));
         triangleShader = new Shader("/assets/shaders/batch.vert", "/assets/shaders/batch.frag");
         triangleVertexArray = new VertexArray();
         triangleVertexBuffer = new VertexBuffer(triangleBufferLayout, MAX_VERTICES);
@@ -57,7 +57,7 @@ public class Renderer {
         triangleVertexArray.addVertexBuffer(triangleVertexBuffer);
 
         // Line Renderer
-        BufferLayout lineBufferLayout = new BufferLayout(new BufferElement(Float2, "a_Position"),  new BufferElement(Float4, "a_Colour"));
+        BufferLayout lineBufferLayout = new BufferLayout(new BufferElement(Float2, "a_Position"), new BufferElement(Float4, "a_Colour"));
         lineShader = new Shader("/assets/shaders/batch.vert", "/assets/shaders/batch.frag");
         lineVertexArray = new VertexArray();
         lineVertexBuffer = new VertexBuffer(lineBufferLayout, MAX_VERTICES);
@@ -77,18 +77,37 @@ public class Renderer {
         lineVertexBuffer.dispose();
     }
 
-    public void beginScene(Camera camera) {
+    public void beginScene(Camera camera, Light... lightPositions) {
         redererDrawCalls = 0;
         rendererSubmissions = 0;
+
+        int counter = 0;
+        for (Light light : lightPositions) {
+            if (counter >= 10) break;
+
+            triangleShader.bind();
+            triangleShader.setUniform3fv("u_Lights[" + counter + "].position", light.getPosition());
+            triangleShader.setUniform4fv("u_Lights[" + counter + "].colour", light.getColour().toVec4());
+            triangleShader.unbind();
+
+            lineShader.bind();
+            lineShader.setUniform3fv("u_Lights[" + counter + "].position", light.getPosition());
+            lineShader.setUniform4fv("u_Lights[" + counter + "].colour", light.getColour().toVec4());
+            lineShader.unbind();
+
+            counter++;
+        }
 
         // Triangle Shader
         triangleShader.bind();
         triangleShader.setUniformMatrix4fv("u_ViewProjection", camera.getViewProjectionMatrix());
+        triangleShader.setUniform1i("u_NumLights", counter);
         triangleShader.unbind();
 
         // Line Shader
         lineShader.bind();
         lineShader.setUniformMatrix4fv("u_ViewProjection", camera.getViewProjectionMatrix());
+        lineShader.setUniform1i("u_NumLights", counter);
         lineShader.unbind();
 
         mapTriangleBuffer();
@@ -230,8 +249,7 @@ public class Renderer {
             mapLineBuffer();
         }
 
-        for (int i = 0; i < vertices.size() - 2; i++)
-        {
+        for (int i = 0; i < vertices.size() - 2; i++) {
             lineByteBuffer.putFloat(vertices.get(0).x).putFloat(vertices.get(0).y).putFloat(colour.r).putFloat(colour.g)
                     .putFloat(colour.b).putFloat(colour.a);
 
@@ -250,7 +268,7 @@ public class Renderer {
     public void submitFilledPolygon(List<Vec4> vertices, Colour colour) {
 
         if (MAX_VERTICES - triangleVertexCount < (vertices.size() - 2) * 3
-        || MAX_VERTICES - lineVertexCount < vertices.size() * 2) {
+                || MAX_VERTICES - lineVertexCount < vertices.size() * 2) {
             flushTriangleBuffer();
             mapTriangleBuffer();
 
@@ -261,8 +279,7 @@ public class Renderer {
         float amt = 0.5f;
         Colour fillColour = new Colour(colour.r * amt, colour.g * amt, colour.b * amt, colour.a);
 
-        for (int i = 0; i < vertices.size() - 2; i++)
-        {
+        for (int i = 0; i < vertices.size() - 2; i++) {
             triangleByteBuffer.putFloat(vertices.get(0).x).putFloat(vertices.get(0).y).putFloat(fillColour.r).putFloat(fillColour.g)
                     .putFloat(fillColour.b).putFloat(fillColour.a);
 
@@ -277,8 +294,7 @@ public class Renderer {
 
         Vec4 p1 = vertices.get(vertices.size() - 1);
 
-        for (int i = 1; i < vertices.size(); i++)
-        {
+        for (int i = 1; i < vertices.size(); i++) {
             Vec4 p2 = vertices.get(i);
 
             lineByteBuffer.putFloat(p1.x).putFloat(p1.y).putFloat(colour.r).putFloat(colour.g)

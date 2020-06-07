@@ -3,6 +3,7 @@ package com.max.harrax.graphics;
 import com.max.harrax.maths.Mat4;
 import com.max.harrax.maths.Vec2;
 import com.max.harrax.maths.Vec3;
+import com.max.harrax.maths.Vec4;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.*;
@@ -96,6 +97,15 @@ public class Shader {
         }
     }
 
+    public void setUniform4fv(String name, Vec4 value) {
+        int location = glGetUniformLocation(id, name);
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(4);
+            value.toBuffer(buffer);
+            glUniform4fv(location, buffer);
+        }
+    }
+
     public void setUniformMatrix4fv(String name, Mat4 value) {
         int location = glGetUniformLocation(id, name);
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -131,5 +141,4 @@ public class Shader {
         CharSequence source = builder.toString();
         return source;
     }
-
 }
