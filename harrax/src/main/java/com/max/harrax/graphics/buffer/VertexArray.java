@@ -11,7 +11,6 @@ public class VertexArray {
     private final int id;
 
     private ArrayList<VertexBuffer> vertexBuffers;
-    private IndexBuffer indexBuffer;
 
     public VertexArray() {
         vertexBuffers = new ArrayList<VertexBuffer>();
@@ -38,17 +37,6 @@ public class VertexArray {
         glBindVertexArray(0);
 
         vertexBuffers.add(vertexBuffer);
-    }
-
-    public void setIndexBuffer(IndexBuffer indexBuffer) {
-        glBindVertexArray(id);
-        indexBuffer.bind();
-
-        this.indexBuffer = indexBuffer;
-    }
-
-    public IndexBuffer getIndexBuffer() {
-        return indexBuffer;
     }
 
     public void bind() {

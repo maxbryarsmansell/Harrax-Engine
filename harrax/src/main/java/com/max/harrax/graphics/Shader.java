@@ -1,17 +1,39 @@
 package com.max.harrax.graphics;
 
-import com.max.harrax.maths.Mat4;
-import com.max.harrax.maths.Vec2;
-import com.max.harrax.maths.Vec3;
-import com.max.harrax.maths.Vec4;
-import org.lwjgl.system.MemoryStack;
+import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
+import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL20.glAttachShader;
+import static org.lwjgl.opengl.GL20.glCompileShader;
+import static org.lwjgl.opengl.GL20.glCreateProgram;
+import static org.lwjgl.opengl.GL20.glCreateShader;
+import static org.lwjgl.opengl.GL20.glDeleteProgram;
+import static org.lwjgl.opengl.GL20.glDeleteShader;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetProgrami;
+import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
+import static org.lwjgl.opengl.GL20.glGetShaderi;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glLinkProgram;
+import static org.lwjgl.opengl.GL20.glShaderSource;
+import static org.lwjgl.opengl.GL20.glUniform1fv;
+import static org.lwjgl.opengl.GL20.glUniform1iv;
+import static org.lwjgl.opengl.GL20.glUniform3fv;
+import static org.lwjgl.opengl.GL20.glUniform4fv;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
+import static org.lwjgl.opengl.GL20.glUseProgram;
 
-import java.io.*;
-import java.net.URISyntaxException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import static org.lwjgl.opengl.GL20.*;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.lwjgl.system.MemoryStack;
 
 public class Shader {
 
@@ -64,54 +86,40 @@ public class Shader {
     public void setUniform1i(String name, int value) {
         int location = glGetUniformLocation(id, name);
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer buffer = stack.mallocInt(1);
-            buffer.put(value).flip();
-            glUniform1iv(location, buffer);
+            IntBuffer ib = stack.mallocInt(1).put(value);
+            glUniform1iv(location, ib);
         }
     }
 
     public void setUniform1fv(String name, float value) {
         int location = glGetUniformLocation(id, name);
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer buffer = stack.mallocFloat(1);
-            buffer.put(value).flip();
-            glUniform1fv(location, buffer);
+            FloatBuffer fb = stack.mallocFloat(1).put(value);
+            glUniform1fv(location, fb);
         }
     }
 
-    public void setUniform2fv(String name, Vec2 value) {
+    public void setUniform3fv(String name, Vector3f value) {
         int location = glGetUniformLocation(id, name);
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer buffer = stack.mallocFloat(2);
-            value.toBuffer(buffer);
-            glUniform2fv(location, buffer);
+            FloatBuffer fb = value.get(stack.mallocFloat(3));
+            glUniform3fv(location, fb);
         }
     }
 
-    public void setUniform3fv(String name, Vec3 value) {
+    public void setUniform4fv(String name, Vector4f value) {
         int location = glGetUniformLocation(id, name);
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer buffer = stack.mallocFloat(3);
-            value.toBuffer(buffer);
-            glUniform3fv(location, buffer);
+            FloatBuffer fb = value.get(stack.mallocFloat(4));
+            glUniform4fv(location, fb);
         }
     }
 
-    public void setUniform4fv(String name, Vec4 value) {
+    public void setUniformMatrix4fv(String name, Matrix4f value) {
         int location = glGetUniformLocation(id, name);
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer buffer = stack.mallocFloat(4);
-            value.toBuffer(buffer);
-            glUniform4fv(location, buffer);
-        }
-    }
-
-    public void setUniformMatrix4fv(String name, Mat4 value) {
-        int location = glGetUniformLocation(id, name);
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer buffer = stack.mallocFloat(4 * 4);
-            value.toBuffer(buffer);
-            glUniformMatrix4fv(location, false, buffer);
+            FloatBuffer fb = value.get(stack.mallocFloat(4 * 4));
+            glUniformMatrix4fv(location, false, fb);
         }
     }
 
@@ -130,7 +138,8 @@ public class Shader {
     private static CharSequence loadShaderSource(String path) {
         StringBuilder builder = new StringBuilder();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(Shader.class.getResourceAsStream(path)))) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(Shader.class.getResourceAsStream(path)))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 builder.append(line).append("\n");

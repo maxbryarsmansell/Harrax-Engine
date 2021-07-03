@@ -1,0 +1,12 @@
+plugins {
+    id "java"
+    id "application"
+}
+
+mainClassName = 'com.max.sandbox.Main' 
+
+applicationDefaultJvmArgs = ["-Djoml.fastmath=true"]
+
+dependencies {
+    implementation project(':harrax')
+}

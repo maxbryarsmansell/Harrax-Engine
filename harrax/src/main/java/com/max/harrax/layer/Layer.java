@@ -4,12 +4,7 @@ import com.max.harrax.events.EventListener;
 
 public abstract class Layer implements EventListener {
 
-    protected String name;
-    protected boolean isVisible;
-
-    public Layer(String name) {
-        this.name = name;
-    }
+    protected boolean isVisible = false;
 
     public abstract void onAttach();
 
@@ -17,7 +12,7 @@ public abstract class Layer implements EventListener {
 
     public abstract void onUpdate(float delta);
 
-    public abstract void dispose();
+    public abstract void onDispose();
 
     public boolean isVisible() {
         return isVisible;
@@ -25,9 +20,5 @@ public abstract class Layer implements EventListener {
 
     public void setVisible(boolean isVisible) {
         this.isVisible = isVisible;
-    }
-
-    public String getName() {
-        return name;
     }
 }

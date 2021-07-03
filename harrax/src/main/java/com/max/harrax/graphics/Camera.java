@@ -1,37 +1,43 @@
 package com.max.harrax.graphics;
 
-import com.max.harrax.maths.Mat4;
-import com.max.harrax.maths.Vec3;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 public abstract class Camera {
-    protected Vec3 position;
 
-    protected Mat4 projectionMatrix;
-    protected Mat4 viewMatrix;
-    protected Mat4 viewProjectionMatrix;
+    protected Vector3f position;
 
-    public Camera(Mat4 projectionMatrix, Mat4 viewMatrix) {
-        this.position = new Vec3();
-        this.projectionMatrix = projectionMatrix;
-        this.viewMatrix = viewMatrix;
-        init();
-        recalculateViewProjectionMatrix();
+    protected Matrix4f projectionMatrix;
+    protected Matrix4f viewMatrix;
+    protected Matrix4f viewProjectionMatrix;
+
+    protected Camera(Matrix4f projectionMatrix, Matrix4f viewMatrix) {
+        this.position = new Vector3f();
+        this.projectionMatrix = new Matrix4f(projectionMatrix);
+        this.viewMatrix = new Matrix4f(viewMatrix);
+        this.viewProjectionMatrix = new Matrix4f();
+
+        projectionMatrix.mul(viewMatrix, this.viewProjectionMatrix);
     }
-
-    protected abstract void init();
 
     protected abstract void recalculateViewProjectionMatrix();
 
-    public Vec3 getPosition() {
+    public Vector3f getPosition() {
         return position;
     }
 
-    public void setPosition(Vec3 position) {
-        this.position = position;
+    public void setPosition(Vector3f position) {
+        this.position.set(position);
         recalculateViewProjectionMatrix();
     }
 
-    public Mat4 getViewProjectionMatrix() {
+    public void setPosition(Vector2f position) {
+        this.position.set(position, 0f);
+        recalculateViewProjectionMatrix();
+    }
+
+    public Matrix4f getViewProjectionMatrix() {
         return viewProjectionMatrix;
     }
 }

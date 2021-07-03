@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 
 public class LayerStack {
+    
     private ArrayList<Layer> layerStack;
 
     private int layerInsertIndex;
@@ -40,7 +41,7 @@ public class LayerStack {
 
     public void dispose() {
         for (Layer layer : layerStack) {
-            layer.dispose();
+            layer.onDispose();
         }
     }
 }

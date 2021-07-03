@@ -1,9 +1,9 @@
 package com.max.harrax.graphics;
 
-import com.max.harrax.maths.Vec3;
-import com.max.harrax.maths.Vec4;
-
 import java.util.Random;
+
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 public class Colour {
 
@@ -12,7 +12,6 @@ public class Colour {
     public static Colour RED = new Colour(1, 0, 0, 1);
     public static Colour GREEN = new Colour(0, 1, 0, 1);
     public static Colour BLUE = new Colour(0, 0, 1, 1);
-    public static Colour TRANSPARENT = new Colour(0, 0, 0, 0);
 
     public final float r, g, b, a;
 
@@ -33,11 +32,11 @@ public class Colour {
         this(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 1);
     }
 
-    public Vec3 toVec3() {
-        return new Vec3(r, g, b);
+    public Vector3f toVec3() {
+        return new Vector3f(r, g, b);
     }
 
-    public Vec4 toVec4() {
-        return new Vec4(r, g, b, a);
+    public Vector4f toVec4() {
+        return new Vector4f(r, g, b, a);
     }
 }

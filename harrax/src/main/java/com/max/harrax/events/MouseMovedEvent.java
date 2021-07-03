@@ -1,7 +1,5 @@
 package com.max.harrax.events;
 
-import com.max.harrax.maths.Vec2;
-
 public class MouseMovedEvent extends Event {
 
     private float xpos, ypos;
@@ -18,10 +16,6 @@ public class MouseMovedEvent extends Event {
 
     public float getMouseY() {
         return ypos;
-    }
-
-    public Vec2 getPos() {
-        return new Vec2(xpos, (float) ypos);
     }
 
 }

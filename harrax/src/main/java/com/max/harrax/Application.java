@@ -1,5 +1,7 @@
 package com.max.harrax;
 
+import java.util.ListIterator;
+
 import com.max.harrax.events.Event;
 import com.max.harrax.events.Event.EventType;
 import com.max.harrax.events.EventDispatcher;
@@ -9,9 +11,6 @@ import com.max.harrax.graphics.Renderer;
 import com.max.harrax.layer.Layer;
 import com.max.harrax.layer.LayerStack;
 import com.max.harrax.utils.Timer;
-
-import java.nio.file.attribute.UserPrincipalLookupService;
-import java.util.ListIterator;
 
 public class Application {
 
@@ -27,7 +26,9 @@ public class Application {
 
     private boolean running;
 
-    public Application() { this("Harrax", 1280, 720); }
+    public Application() {
+        this("Harrax", 1280, 720);
+    }
 
     public Application(String title, int width, int height) {
         if (application == null)

@@ -1,38 +1,38 @@
 package com.max.harrax.graphics;
 
-import com.max.harrax.maths.Mat4;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class OrthographicCamera extends Camera {
 
-    private float rotation;
     private float scale;
 
     public OrthographicCamera(float left, float right, float bottom, float top) {
-        super(Mat4.orthographic(left, right, bottom, top, -1.0f, 1.0f), Mat4.IDENTITY);
+        super(new Matrix4f().ortho(left, right, bottom, top, -1.0f, 1.0f), new Matrix4f());
+
+        this.scale = 1f;
     }
 
-    @Override
-    protected void init() {
-        rotation = 0.0f;
-        scale = 1.0f;
+    public void set(float left, float right, float bottom, float top) {
+        projectionMatrix.set(new Matrix4f().ortho(left, right, bottom, top, -1.0f, 1.0f));
+
+        recalculateViewProjectionMatrix();
     }
 
     @Override
     protected void recalculateViewProjectionMatrix() {
-        Mat4 transform = Mat4.translation(position).mult(Mat4.zAxisRotation(rotation).mult(Mat4.scale(scale)));
-
-        viewMatrix = transform.inverse();
-        viewProjectionMatrix = projectionMatrix.mult(viewMatrix);
+        viewMatrix.set(new Matrix4f().translation(new Vector3f(position).negate()).mul(new Matrix4f().scale(scale)));
+        projectionMatrix.mul(viewMatrix, viewProjectionMatrix);
     }
 
-    public float getRotation() {
-        return rotation;
-    }
+    // public void setRotation(float rotation) {
+    // this.rotation = rotation;
+    // recalculateViewProjectionMatrix();
+    // }
 
-    public void setRotation(float rotation) {
-        this.rotation = rotation;
-        recalculateViewProjectionMatrix();
-    }
+    // public float getRotation() {
+    // return rotation;
+    // }
 
     public void setScale(float scale) {
         this.scale = scale;
@@ -44,4 +44,3 @@ public class OrthographicCamera extends Camera {
     }
 
 }
-
