@@ -24,9 +24,6 @@ import static org.lwjgl.opengl.GL20.glUniform4fv;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -39,10 +36,7 @@ public class Shader {
 
     private final int id;
 
-    public Shader(String vertexPath, String fragmentPath) {
-        // Get the source code from the given files.
-        CharSequence vertexSource = loadShaderSource(vertexPath);
-        CharSequence fragmentSource = loadShaderSource(fragmentPath);
+    public Shader(String vertexSource, String fragmentSource) {
 
         // Stores the handle of the vertex and fragment shader
         int vertex, fragment, status;
@@ -133,21 +127,5 @@ public class Shader {
 
     public void dispose() {
         glDeleteProgram(id);
-    }
-
-    private static CharSequence loadShaderSource(String path) {
-        StringBuilder builder = new StringBuilder();
-
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(Shader.class.getResourceAsStream(path)))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line).append("\n");
-            }
-        } catch (IOException | NullPointerException e) {
-            throw new RuntimeException("Failed to load shader file." + System.lineSeparator() + e.getMessage());
-        }
-        CharSequence source = builder.toString();
-        return source;
     }
 }

@@ -22,6 +22,7 @@ import static org.lwjgl.opengl.GL11.GL_VERSION;
 import static org.lwjgl.opengl.GL11.glGetString;
 
 import com.max.harrax.events.Event;
+import com.max.harrax.events.KeyCode;
 import com.max.harrax.events.KeyPressedEvent;
 import com.max.harrax.events.KeyReleasedEvent;
 import com.max.harrax.events.MouseButtonPressedEvent;
@@ -85,10 +86,16 @@ public class Window {
         glfwSetKeyCallback(window, keyCallback = GLFWKeyCallback.create((window, key, scancode, action, mods) -> {
             switch (action) {
                 case GLFW_PRESS:
-                    Application.get().onEvent(new KeyPressedEvent(key));
+                    for (KeyCode kc : KeyCode.values()) {
+                        if (kc.code == key)
+                            Application.get().onEvent(new KeyPressedEvent(kc));
+                    }
                     break;
                 case GLFW_RELEASE:
-                    Application.get().onEvent(new KeyReleasedEvent(key));
+                    for (KeyCode kc : KeyCode.values()) {
+                        if (kc.code == key)
+                            Application.get().onEvent(new KeyReleasedEvent(kc));
+                    }
                     break;
             }
         }));

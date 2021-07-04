@@ -81,7 +81,9 @@ public class Application {
 
             ListIterator<Layer> iterator = layerStack.start();
             while (iterator.hasNext()) {
-                iterator.next().onUpdate(delta);
+                Layer layer = iterator.next();
+                
+                layer.onUpdate(delta);
             }
 
             window.onUpdate();

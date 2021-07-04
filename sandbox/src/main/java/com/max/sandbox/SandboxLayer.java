@@ -4,6 +4,8 @@ import com.max.harrax.Application;
 import com.max.harrax.events.Event;
 import com.max.harrax.events.Event.EventType;
 import com.max.harrax.events.EventDispatcher;
+import com.max.harrax.events.KeyCode;
+import com.max.harrax.events.KeyPressedEvent;
 import com.max.harrax.events.WindowResizeEvent;
 import com.max.harrax.graphics.Colour;
 import com.max.harrax.graphics.OrthographicCamera;
@@ -23,9 +25,9 @@ public class SandboxLayer extends Layer {
 
     public void onAttach() {
 
-        float width = Application.get().getWindow().getWidth();
-        float height = Application.get().getWindow().getHeight();
-        float aspect = width / height;
+        int width = Application.get().getWindow().getWidth();
+        int height = Application.get().getWindow().getHeight();
+        float aspect = (float) width / (float) height;
 
         renderer = new Renderer();
         camera = new OrthographicCamera(0f, 9f * aspect, 0f, 9f);
@@ -44,11 +46,15 @@ public class SandboxLayer extends Layer {
         position.set(Math.sin(time) * 3f + 8, Math.cos(time) * 3f + 4);
 
         renderer.beginScene(camera);
+
+        renderer.submitLight(new Vector2f(3, 3), 2, Colour.RED);
+        renderer.submitLight(position, 4, Colour.BLUE);
+
         renderer.submitQuad(position.x, 4f, 2f, 2f, Colour.GREEN);
         renderer.submitQuad(6f, 3f, position.y, 2f, new Colour(0.8f, 0.6f, 0.5f, 0.8f));
-        renderer.submitQuad(6f, 2f, 1f, 5f, new Colour(0.5f, 0.4f, 0.9f, 0.5f));
-        renderer.submitLine(position, new Vector2f(14, 7), Colour.RED);
-        renderer.submitLine(new Vector2f(2, 8), new Vector2f(14, 2), Colour.WHITE);
+        renderer.submitQuad(6f, position.y, 1.5f, 3f, new Colour(0.5f, 0.4f, 0.9f, 0.5f));
+        renderer.submitLine(position, new Vector2f(12, 7), Colour.RED);
+        renderer.submitLine(new Vector2f(2, 8), position, Colour.BLUE);
         renderer.endScene();
     }
 
@@ -60,6 +66,7 @@ public class SandboxLayer extends Layer {
     public void onEvent(Event event) {
         EventDispatcher eventDispatcher = new EventDispatcher(event);
         eventDispatcher.dispatch(EventType.WindowResize, e -> onWindowResize((WindowResizeEvent) e));
+        eventDispatcher.dispatch(EventType.KeyPressed, e -> onKeyPressed((KeyPressedEvent) e));
     }
 
     private boolean onWindowResize(WindowResizeEvent e) {
@@ -69,6 +76,15 @@ public class SandboxLayer extends Layer {
         float aspect = width / height;
 
         camera.set(0f, 9f * aspect, 0f, 9f);
+
+        return false;
+    }
+
+    private boolean onKeyPressed(KeyPressedEvent e) {
+
+        if (e.getKeyCode() == KeyCode.Escape) {
+            Application.get().shutdown();
+        }
 
         return false;
     }

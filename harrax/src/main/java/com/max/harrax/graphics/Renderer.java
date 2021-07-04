@@ -5,6 +5,7 @@ import static com.max.harrax.graphics.buffer.ShaderDataType.Float4;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -12,15 +13,21 @@ import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glViewport;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.util.List;
 
+import com.max.harrax.Application;
 import com.max.harrax.graphics.buffer.BufferElement;
 import com.max.harrax.graphics.buffer.BufferLayout;
+import com.max.harrax.graphics.buffer.FrameBuffer;
 import com.max.harrax.graphics.buffer.VertexArray;
 import com.max.harrax.graphics.buffer.VertexBuffer;
 
@@ -30,6 +37,7 @@ import org.joml.Vector4f;
 public class Renderer {
 
     private static final int MAX_VERTICES = 1024 * 50;
+    private static final int MAX_LIGHTS = 10;
 
     private Shader triangleShader;
     private VertexArray triangleVertexArray;
@@ -43,6 +51,16 @@ public class Renderer {
     private ByteBuffer lineByteBuffer;
     private int lineVertexCount;
 
+    private Shader lightingShader;
+    private VertexArray lightingVertexArray;
+    private VertexBuffer lightingVertexBuffer;
+    private ByteBuffer lightByteBuffer;
+    private int lightVertexCount;
+
+    private Texture lightTexture;
+
+    private FrameBuffer frameBuffer;
+
     private int rendererSubmissions;
     private int redererDrawCalls;
 
@@ -51,8 +69,8 @@ public class Renderer {
     }
 
     public void init() {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         rendererSubmissions = 0;
         redererDrawCalls = 0;
@@ -60,20 +78,48 @@ public class Renderer {
         // Triangle Renderer
         BufferLayout triangleBufferLayout = new BufferLayout(new BufferElement(Float2, "a_Position"),
                 new BufferElement(Float4, "a_Colour"));
-        triangleShader = new Shader("/assets/shaders/batch.vert", "/assets/shaders/batch.frag");
-        triangleVertexArray = new VertexArray();
+        triangleShader = new Shader(loadShaderSource("/assets/shaders/batch.vert"),
+                loadShaderSource("/assets/shaders/batch.frag"));
         triangleVertexBuffer = new VertexBuffer(triangleBufferLayout, MAX_VERTICES);
-        triangleVertexCount = 0;
+        triangleVertexArray = new VertexArray();
         triangleVertexArray.addVertexBuffer(triangleVertexBuffer);
+        triangleVertexCount = 0;
 
         // Line Renderer
         BufferLayout lineBufferLayout = new BufferLayout(new BufferElement(Float2, "a_Position"),
                 new BufferElement(Float4, "a_Colour"));
-        lineShader = new Shader("/assets/shaders/batch.vert", "/assets/shaders/batch.frag");
-        lineVertexArray = new VertexArray();
+        lineShader = new Shader(loadShaderSource("/assets/shaders/batch.vert"),
+                loadShaderSource("/assets/shaders/batch.frag"));
         lineVertexBuffer = new VertexBuffer(lineBufferLayout, MAX_VERTICES);
-        lineVertexCount = 0;
+        lineVertexArray = new VertexArray();
         lineVertexArray.addVertexBuffer(lineVertexBuffer);
+        lineVertexCount = 0;
+
+        BufferLayout bufferLayout = new BufferLayout(new BufferElement(Float2, "a_Position"),
+                new BufferElement(Float2, "a_TexCoord"), new BufferElement(Float4, "a_Colour"));
+        lightingShader = new Shader(loadShaderSource("/assets/shaders/lighting.vert"),
+                loadShaderSource("/assets/shaders/lighting.frag"));
+        lightingVertexBuffer = new VertexBuffer(bufferLayout, MAX_LIGHTS * 6);
+        lightingVertexArray = new VertexArray();
+        lightingVertexArray.addVertexBuffer(lightingVertexBuffer);
+        lightVertexCount = 0;
+
+        lightTexture = Texture.loadTexture("/assets/light.png");
+
+        // ByteBuffer byteBuffer = lightingVertexBuffer.mapBuffer(null);
+
+        // byteBuffer
+        // .putFloat(-1f).putFloat( 1f).putFloat(0f).putFloat(1f)
+        // .putFloat(-1f).putFloat(-1f).putFloat(0f).putFloat(0f)
+        // .putFloat( 1f).putFloat(-1f).putFloat(1f).putFloat(0f)
+        // .putFloat( 1f).putFloat(-1f).putFloat(1f).putFloat(0f)
+        // .putFloat(-1f).putFloat( 1f).putFloat(0f).putFloat(1f)
+        // .putFloat( 1f).putFloat( 1f).putFloat(1f).putFloat(1f);
+
+        // lightingVertexBuffer.unmapBuffer();
+
+        frameBuffer = new FrameBuffer(Application.get().getWindow().getWidth(),
+                                        Application.get().getWindow().getHeight());
     }
 
     public void dispose() {
@@ -86,6 +132,15 @@ public class Renderer {
         lineShader.dispose();
         lineVertexArray.dispose();
         lineVertexBuffer.dispose();
+
+        // Lighting
+        lightingShader.dispose();
+        lightingVertexArray.dispose();
+        lightingVertexBuffer.dispose();
+
+        lightTexture.dispose();
+
+        frameBuffer.dispose();
     }
 
     public void beginScene(Camera camera) {
@@ -97,8 +152,6 @@ public class Renderer {
         redererDrawCalls = 0;
         rendererSubmissions = 0;
 
-        // System.out.println(camera.getViewProjectionMatrix());
-
         // Triangle Shader
         triangleShader.bind();
         triangleShader.setUniformMatrix4fv("u_ViewProjection", camera.getViewProjectionMatrix());
@@ -109,8 +162,14 @@ public class Renderer {
         lineShader.setUniformMatrix4fv("u_ViewProjection", camera.getViewProjectionMatrix());
         lineShader.unbind();
 
+        // Light Shader
+        lightingShader.bind();
+        lightingShader.setUniformMatrix4fv("u_ViewProjection", camera.getViewProjectionMatrix());
+        lightingShader.unbind();
+
         mapTriangleBuffer();
         mapLineBuffer();
+        mapLightBuffer();
     }
 
     public static void setViewportSize(int width, int height) {
@@ -122,13 +181,53 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
+    public static void enableDepthTest() {
+        glEnable(GL_DEPTH_TEST);
+    }
+
+    public static void disableDepthTest() {
+        glDisable(GL_DEPTH_TEST);
+    }
+
     public void endScene() {
         flush();
     }
 
     private void flush() {
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // glEnable(GL_DEPTH_TEST);
+
         flushTriangleBuffer();
         flushLineBuffer();
+
+        // Lighting Pass
+
+        // frameBuffer.bind();
+
+        // glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // glDisable(GL_DEPTH_TEST);
+        
+        flushLightBuffer();
+
+        // frameBuffer.unbind();
+
+        // lightingShader.bind();
+        // lightingVertexArray.bind();
+
+        // frameBuffer.bindColourTexture();
+
+        // glDrawArrays(GL_TRIANGLES, 0, lightVertexCount);
+
+        // lightingVertexArray.unbind();
+        // lightingShader.unbind();
+
     }
 
     private void mapTriangleBuffer() {
@@ -137,6 +236,10 @@ public class Renderer {
 
     private void mapLineBuffer() {
         lineByteBuffer = lineVertexBuffer.mapBuffer(lineByteBuffer);
+    }
+
+    private void mapLightBuffer() {
+        lightByteBuffer = lightingVertexBuffer.mapBuffer(lightByteBuffer);
     }
 
     private void flushTriangleBuffer() {
@@ -179,6 +282,47 @@ public class Renderer {
         lineVertexCount = 0;
 
         redererDrawCalls++;
+    }
+
+    private void flushLightBuffer() {
+
+        lightingVertexBuffer.unmapBuffer();
+
+        // Check whether there are vertices to flush
+        if (lightVertexCount == 0)
+            return;
+
+        lightingShader.bind();
+        lightingVertexArray.bind();
+
+        lightTexture.bind();
+
+        glDrawArrays(GL_TRIANGLES, 0, lightVertexCount);
+
+        lightingVertexArray.unbind();
+        lightingShader.unbind();
+
+        lightVertexCount = 0;
+
+        redererDrawCalls++;
+    }
+
+    public void submitLight(Vector2f pos, float radius, Colour colour) {
+
+        if (MAX_LIGHTS * 6 - lightVertexCount < 6) {
+            flushLightBuffer();
+            mapLightBuffer();
+        }
+
+        lightByteBuffer.putFloat(pos.x - radius).putFloat(pos.y + radius).putFloat(0f).putFloat(1f).putFloat(colour.r).putFloat(colour.g).putFloat(colour.b).putFloat(colour.a);
+        lightByteBuffer.putFloat(pos.x - radius).putFloat(pos.y - radius).putFloat(0f).putFloat(0f).putFloat(colour.r).putFloat(colour.g).putFloat(colour.b).putFloat(colour.a);
+        lightByteBuffer.putFloat(pos.x + radius).putFloat(pos.y - radius).putFloat(1f).putFloat(0f).putFloat(colour.r).putFloat(colour.g).putFloat(colour.b).putFloat(colour.a);
+        lightByteBuffer.putFloat(pos.x + radius).putFloat(pos.y - radius).putFloat(1f).putFloat(0f).putFloat(colour.r).putFloat(colour.g).putFloat(colour.b).putFloat(colour.a);
+        lightByteBuffer.putFloat(pos.x - radius).putFloat(pos.y + radius).putFloat(0f).putFloat(1f).putFloat(colour.r).putFloat(colour.g).putFloat(colour.b).putFloat(colour.a);
+        lightByteBuffer.putFloat(pos.x + radius).putFloat(pos.y + radius).putFloat(1f).putFloat(1f).putFloat(colour.r).putFloat(colour.g).putFloat(colour.b).putFloat(colour.a);
+
+        lightVertexCount += 6;
+
     }
 
     public void submitLine(Vector2f p1, Vector2f p2, Colour colour) {
@@ -275,5 +419,22 @@ public class Renderer {
 
     public int getRedererDrawCalls() {
         return redererDrawCalls;
+    }
+
+    private static String loadShaderSource(String path) {
+
+        StringBuilder builder = new StringBuilder();
+
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(Renderer.class.getResourceAsStream(path)))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line).append("\n");
+            }
+        } catch (IOException | NullPointerException e) {
+            throw new RuntimeException("Failed to load shader file.");
+        }
+
+        return builder.toString();
     }
 }

@@ -2,15 +2,14 @@ package com.max.harrax.events;
 
 public class KeyReleasedEvent extends Event {
 
-    private int keyCode;
+  private KeyCode keyCode;
 
-    public KeyReleasedEvent(int keyCode) {
-        super(Event.EventType.KeyReleased);
-        this.keyCode = keyCode;
-    }
+  public KeyReleasedEvent(KeyCode keyCode) {
+    super(Event.EventType.KeyReleased);
+    this.keyCode = keyCode;
+  }
 
-    public int getKeyCode() {
-        return keyCode;
-    }
-
+  public KeyCode getKeyCode() {
+    return keyCode;
+  }
 }
